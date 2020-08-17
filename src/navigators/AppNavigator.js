@@ -6,6 +6,9 @@ import Home from '../screens/Home';
 import { View, Image } from 'react-native';
 import Images from '../helpers/Images';
 import Colors from '../constants/Colors';
+import Explore from '../screens/Explore';
+import Notifications from '../screens/Notifications';
+import MyWall from '../screens/MyWall';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -46,15 +49,15 @@ export default class AppNavigator extends React.Component {
                 }}                
                 >
                 <Tab.Screen name="Home" component={Home}/>
-                <Tab.Screen name="Explore" component={Home}/>
+                <Tab.Screen name="Explore" component={Explore}/>
                 <Tab.Screen name="Create" component={Home} listeners={{
                     tabPress: e => {
                         console.log('TODO: push create modal');                
                         e.preventDefault();
                     },
                 }}/>
-                <Tab.Screen name="Notifications" component={Home} options={{tabBarBadge: 3}}/>
-                <Tab.Screen name="My Wall" component={Home}/>
+                <Tab.Screen name="Notifications" component={Notifications} options={{tabBarBadge: 3,}}/>
+                <Tab.Screen name="My Wall" component={MyWall}/>
             </Tab.Navigator>
             {/* <Stack.Navigator>
             </Stack.Navigator> */}
