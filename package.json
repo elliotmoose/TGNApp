@@ -1,0 +1,49 @@
+{
+  "name": "TGNApp",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "start": "react-native start",
+    "test": "jest",
+    "lint": "eslint .",
+    "build:ios": "react-native bundle --entry-file='index.js' --bundle-output='./ios/Setlist/main.jsbundle' --dev=false --platform='ios' --assets-dest='./ios'",
+    "build:android": "npx jetify && cd android && ./gradlew assembleRelease",
+    "generateAndroidKey": "keytool -genkey -v -keystore setlistapp.keystore -alias mooselliot -keyalg RSA -keysize 2048 -validity 90000",
+    "init_ios_build": "react-native bundle --entry-file index.js --platform ios --dev false --bundle-output ios/main.jsbundle --assets-dest ios",
+    "pod": "npx pod-install ios",
+    "ios": "react-native run-ios",
+    "ios-XR": "react-native run-ios --simulator \"iPhone Xr\"",
+    "android": "react-native run-android",
+    "android:release": "react-native run-android --variant=release",
+    "androidlog": "adb logcat *:S ReactNative:V ReactNativeJS:V",
+    "android-linux": "react-native bundle --platform android --dev false --entry-file index.js --bundle-output android/app/src/main/assets/index.android.bundle --assets-dest android/app/src/main/res && react-native run-android",
+    "ios show touch": "defaults write com.apple.iphonesimulator ShowSingleTouches 1",
+    "ios hide touch": "defaults write com.apple.iphonesimulator ShowSingleTouches 0",
+    "ios-record": "xcrun simctl io booted recordVideo screen.mov"
+  },
+  "dependencies": {
+    "@react-native-community/masked-view": "^0.1.10",
+    "@react-navigation/bottom-tabs": "^5.8.0",
+    "@react-navigation/native": "^5.7.3",
+    "@react-navigation/stack": "^5.9.0",
+    "react": "16.13.1",
+    "react-native": "0.63.2",
+    "react-native-gesture-handler": "^1.7.0",
+    "react-native-safe-area-context": "^3.1.4",
+    "react-native-screens": "^2.10.1",
+    "react-navigation": "^4.4.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.11.1",
+    "@babel/runtime": "^7.11.2",
+    "@react-native-community/eslint-config": "^2.0.0",
+    "babel-jest": "^26.3.0",
+    "eslint": "^7.7.0",
+    "jest": "^26.4.0",
+    "metro-react-native-babel-preset": "^0.62.0",
+    "react-test-renderer": "16.13.1"
+  },
+  "jest": {
+    "preset": "react-native"
+  }
+}
