@@ -5,6 +5,7 @@ import Colors from '../../constants/Colors';
 import Post from '../../components/home/Post';
 import Images from '../../helpers/Images';
 import { Hitslop } from '../../constants/Sizing';
+import { PostController } from '../../api/Post';
 
 let post = {
     user: {
@@ -31,8 +32,25 @@ let post = {
 
 
 class Feed extends Component {
-    post({ item: post }) {
-        return <Post post={post} style={{ width: '100%' }} />
+    constructor(props) {
+        super(props);        
+        
+        this.state = {
+            posts: []
+        }
+    }
+
+    componentDidMount() {
+        this.loadFeed();
+    }
+
+    async loadFeed() {
+        let postIds = await PostController.GetFeed();
+        this.setState({postIds});
+    }
+
+    post({ item: postId }) {
+        return <Post postId={postId} style={{ width: '100%' }} />
     }
 
     render() {
@@ -47,9 +65,9 @@ class Feed extends Component {
             <View style={{height: 0.3, width: '100%', backgroundColor: 'gray', opacity: 0.4}}/>
             <View style={{ width: '100%', flex: 1 }}>
                 <FlatList
-                    data={[post, post, post, post, post, post]}
+                    data={this.state.postIds}
                     renderItem={this.post}
-                    keyExtractor={(post, index) => `${index}`}
+                    keyExtractor={(postIds, index) => `${postIds}`}
                     style={{ backgroundColor: Colors.bgGray }}
                 />
             </View>

@@ -3,6 +3,7 @@ import { View, Text, Image, TouchableOpacity } from 'react-native';
 import Colors from '../../constants/Colors';
 import Images from '../../helpers/Images';
 import moment from 'moment';
+import { PostController } from '../../api/Post';
 
 class Post extends Component {
     reactToPost(reactionType) {
@@ -15,14 +16,13 @@ class Post extends Component {
         </View>
     }
     postHeader(post) {
-        let username = post.user.username;
-        let profilePicture = post.user.profilePicture;
-        let postType = post.type;
-        let postTarget = post.target.handle;
-        // let postTime = post.dateCreated
-        let isPastADay = Date.now() - post.dateCreated > 35*60*60*1000;
-        let postTime = isPastADay ? moment(post.dateCreated).format("DD MMM YYYY") : moment(post.dateCreated).fromNow();
-
+        
+        let username = (post.user && post.user.username) || 'unknown_user' ;
+        let profilePicture = (post.user && post.user.profilePicture) || null;
+        let postType = post.type || 'no_post_type';
+        let postTarget = post.target && post.target.handle;
+        let isPastADay = post.dateCreated ? (Date.now() - post.dateCreated > 35*60*60*1000) : false;
+        let postTime = post.dateCreated ? (isPastADay ? moment(post.dateCreated).format("DD MMM YYYY") : moment(post.dateCreated).fromNow()) : '';
 
         return <View style={{flexDirection: 'row', height: 50}}>
             <Image style={{backgroundColor: Colors.darkGray, height: '100%', aspectRatio: 1, borderRadius: 100}} source={{uri: profilePicture}}/>
@@ -45,12 +45,18 @@ class Post extends Component {
         </View>
     }
     
-    postReactions(myReactions) {                
+    postReactions(post) {                
+        let myReactions = post.myReactions || [];
+        let reactionCount = post.reactionCount || 0;
+        let reactionCountSuffix = reactionCount == 1 ? '' : 's';
+        let commentCount = post.commentCount || 0;
+        let commentCountSuffix = commentCount == 1 ? '' : 's';
+
         return <View style={{marginTop: 24, flexDirection: 'row', height: 34}}>
             <TouchableOpacity style={{flexDirection: 'row', alignItems: 'center', height: 16, alignSelf: 'flex-end'}}>           
                 <View style={{flexDirection: 'row', alignItems: 'center', height: '100%'}}>
                     <Image source={Images.reactionLove} style={{height: 16, width: 16}} resizeMode='contain'/>     
-                    <Text style={{fontSize: 12, fontWeight: '200', marginLeft: 4}}>130 Reactions • 54 Comments</Text>
+                    <Text style={{fontSize: 12, fontWeight: '200', marginLeft: 4}}>{reactionCount} Reaction{reactionCountSuffix} • {commentCount} Comment{commentCountSuffix}</Text>
                 </View>
             </TouchableOpacity>
             <View style={{flex: 1}}/>
@@ -75,16 +81,31 @@ class Post extends Component {
     postComments() {
         return <View/>
     }
-    render() {
-        let {post} = this.props;                
 
+    constructor(props) {
+        super(props);
+        this.state = {
+            post : {
+        
+            }
+        }
+    }
+
+    async componentDidMount() {
+        let { postId } = this.props;                
+        let post = await PostController.GetPost(postId);
+        this.setState({post});
+    }
+
+    render() {
+        let post = this.state.post || {};                
         // let content = 'Faucibus scelerisque eleifend donec pretium vulputate sapien nec sagittis aliquam malesuada bibendum arcu vitae elementum curabitur vitae nunc sed velit Neque gravida in fermentum et sollicitudin ac orci phasellus egestas tellus rutrum tellus pellentesque eu tincidunt tortor aliquam nulla facilisi A condimentum vitae sapien pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas sed tempus urna phasellus vestibulum lorem sed risus ultricies tristique.';
 
         return (
             <View style={{backgroundColor: 'white', marginBottom: 20, padding: 16}} {...this.props.style}>
                 {this.postHeader(post)}                
                 {this.postContent(post.content)}
-                {this.postReactions(post.myReactions)}                
+                {this.postReactions(post)}                
                 {this.postComments()}
             </View>
         );
