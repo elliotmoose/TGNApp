@@ -17,7 +17,7 @@ const Colors = {
     sectionRowText: '#2E2B34',
     progressionRow: '#EFEFEF',
     red: '#BE4242',
-    blue: '#4182A5',
+    blue: '#65E3FF',
     green: '#41A57C',
     greenDown: '#32805F'
 }
