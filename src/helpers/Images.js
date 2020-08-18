@@ -1,4 +1,5 @@
 var Images = {
+    filter: require('../../assets/images/filter.png'),
     home: require('../../assets/images/home.png'),
     explore: require('../../assets/images/explore.png'),
     create: require('../../assets/images/create.png'),

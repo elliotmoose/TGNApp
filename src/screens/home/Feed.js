@@ -1,8 +1,10 @@
 import React, { Component } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, FlatList } from 'react-native'
+import { View, Text, ScrollView, TouchableOpacity, FlatList, Image } from 'react-native'
 import { SafeAreaView } from 'react-navigation';
 import Colors from '../../constants/Colors';
 import Post from '../../components/home/Post';
+import Images from '../../helpers/Images';
+import { Hitslop } from '../../constants/Sizing';
 
 let post = {
     user: {
@@ -29,50 +31,28 @@ let post = {
 
 
 class Feed extends Component {
-    static navigationOptions = ({ navigation }) => {
-        const {state} = navigation;
-        const {} = state;
-        return {
-            headerStyle:{
-                backgroundColor: "Transparent",
-                marginRight: 20,
-                marginLeft: 20,
-            }, 
-            headerLeft: (
-                <TouchableOpacity>
-                        <Text>Hello</Text>
-                </TouchableOpacity>
-            ),
-            
-            // headerRight: (
-            //     <TouchableOpacity>
-            //             <Icon2 name="sc-telegram" color={Colors.red} size={30} />
-            //     </TouchableOpacity>
-            // ),
-            // headerRightStyle: styles.planeIcon,
-            headerTransparent:  true,
-        };
-    }
-
     post({ item: post }) {
         return <Post post={post} style={{ width: '100%' }} />
     }
 
     render() {
 
-        return <SafeAreaView style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+        return <SafeAreaView style={{ flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: 'white' }}>
+            <View style={{width: '100%', backgroundColor: 'white', flexDirection: 'row', alignItems: 'center', paddingBottom: 10}}>
+                <Text style={{fontWeight: '700', fontSize: 32, marginLeft: 18,flex: 1}}>Feed</Text>
+                <TouchableOpacity style={{width: 32, aspectRatio: 1, marginRight: 10}} hitSlop={Hitslop(20)} onPress={()=>console.log('TODO: present filter')}>
+                    <Image source={Images.filter} resizeMode='contain' style={{width: '100%', height: '100%', tintColor: Colors.primary}}/>
+                </TouchableOpacity>
+            </View>
+            <View style={{height: 0.3, width: '100%', backgroundColor: 'gray', opacity: 0.4}}/>
             <View style={{ width: '100%', flex: 1 }}>
                 <FlatList
-                    data={[post, post, post]}
+                    data={[post, post, post, post, post, post]}
                     renderItem={this.post}
                     keyExtractor={(post, index) => `${index}`}
                     style={{ backgroundColor: Colors.bgGray }}
                 />
-                {/* <Text>
-                HOME
-        </Text> */}
             </View>
-
         </SafeAreaView>
     }
 }

@@ -1,4 +1,4 @@
-import { EventRegister } from 'react-native-event-listeners';
+// import { EventRegister } from 'react-native-event-listeners';
 import { AsyncStorage, Dimensions } from 'react-native';
 
 console.log(Dimensions.get('window').width)
@@ -6,7 +6,9 @@ console.log(Dimensions.get('window').height)
 
 const SIZING_STORAGE_KEY = 'SIZING_STORAGE_KEY'
 
-
+export var Hitslop = (amt)=>{
+    return {top: amt, left: amt, right: amt, bottom: amt}
+}
 
 export var Sizes = {
     SMALL : 'SMALL',
@@ -75,11 +77,11 @@ export var save = async ()=>{
 }
 
 
-export var setMultiplier = (multiplier)=>{
-    exports.multiplier = multiplier;
-    exports.save();
-    EventRegister.emit('UPDATE_HOME_UI')    ;
-}
+// export var setMultiplier = (multiplier)=>{
+//     exports.multiplier = multiplier;
+//     exports.save();
+//     EventRegister.emit('UPDATE_HOME_UI')    ;
+// }
 
 
 export var Sizing = {}
