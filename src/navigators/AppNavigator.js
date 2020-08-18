@@ -2,7 +2,7 @@ import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import Home from '../screens/Home';
+import HomeNavigator from './HomeNavigator';
 import { View, Image } from 'react-native';
 import Images from '../helpers/Images';
 import Colors from '../constants/Colors';
@@ -10,10 +10,7 @@ import Explore from '../screens/Explore';
 import Notifications from '../screens/Notifications';
 import MyWall from '../screens/MyWall';
 
-const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
-
-console.log('test');
 // Tab.navigationOptions = ({navigation}) => {
 //     tabBarOnPress: console.log('pressed tab');
 // }
@@ -48,9 +45,9 @@ export default class AppNavigator extends React.Component {
                     activeTintColor: Colors.primary,
                 }}                
                 >
-                <Tab.Screen name="Home" component={Home}/>
+                <Tab.Screen name="Home" component={HomeNavigator}/>
                 <Tab.Screen name="Explore" component={Explore}/>
-                <Tab.Screen name="Create" component={Home} listeners={{
+                <Tab.Screen name="Create" component={Explore} listeners={{
                     tabPress: e => {
                         console.log('TODO: push create modal');                
                         e.preventDefault();

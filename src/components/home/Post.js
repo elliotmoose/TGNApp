@@ -15,21 +15,17 @@ class Post extends Component {
         </View>
     }
     postHeader(post) {
-
         let username = post.user.username;
+        let profilePicture = post.user.profilePicture;
         let postType = post.type;
         let postTarget = post.target.handle;
         // let postTime = post.dateCreated
         let isPastADay = Date.now() - post.dateCreated > 35*60*60*1000;
-        
         let postTime = isPastADay ? moment(post.dateCreated).format("DD MMM YYYY") : moment(post.dateCreated).fromNow();
-        
-        let timeSince = post.dateCreated
-        // let postTime = '5 hours ago';
 
 
         return <View style={{flexDirection: 'row', height: 50}}>
-            <Image style={{backgroundColor: Colors.darkGray, height: '100%', aspectRatio: 1, borderRadius: 100}} source={null}/>
+            <Image style={{backgroundColor: Colors.darkGray, height: '100%', aspectRatio: 1, borderRadius: 100}} source={{uri: profilePicture}}/>
             <View style={{flexDirection: 'column', height: '100%', justifyContent: 'space-between', marginLeft: 9, padding: 4, flex: 1}}>
                 <Text style={{fontSize: 18, fontWeight: 'bold'}}>{username}</Text>
                 <View style={{width: '100%'}}>
@@ -80,29 +76,7 @@ class Post extends Component {
         return <View/>
     }
     render() {
-        // let post = this.props;        
-        let post = {
-            user: {
-                username: "mooselliot",
-                profilePicture: 'https://scontent.fsin8-2.fna.fbcdn.net/v/t1.0-9/64653383_10212685679891511_3318642605947879424_o.jpg?_nc_cat=101&_nc_sid=85a577&_nc_ohc=AcCAq9A6FpMAX_pBWuI&_nc_ht=scontent.fsin8-2.fna&oh=e1159ea8dd38e270a22a9db979617b06&oe=5F62C59B'
-            },
-            type: "Testimony",
-            target: {
-                handle: 'bethelaog',
-                name: 'Bethel Aog'
-            },
-            content: 'Hi everyone!! Nice to meet all of you I\'m excited for our event this friday. Looking forward to see everyone else there!',
-            reactionCount: 130,
-            commentCount: 52,
-            myReactions: ["love", "pray"],
-            peekComments: [{
-                user: {
-                    username: 'llpofwy',
-                    profilePicture: 'https'
-                }
-            }],
-            dateCreated: new Date(Date.now() - 60*60*1000*36),            
-        }
+        let {post} = this.props;                
 
         // let content = 'Faucibus scelerisque eleifend donec pretium vulputate sapien nec sagittis aliquam malesuada bibendum arcu vitae elementum curabitur vitae nunc sed velit Neque gravida in fermentum et sollicitudin ac orci phasellus egestas tellus rutrum tellus pellentesque eu tincidunt tortor aliquam nulla facilisi A condimentum vitae sapien pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas sed tempus urna phasellus vestibulum lorem sed risus ultricies tristique.';
 
