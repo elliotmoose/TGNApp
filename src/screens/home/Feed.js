@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, FlatList, Image } from 'react-native'
+import { View, Text, ScrollView, TouchableOpacity, FlatList, Image, ActivityIndicator } from 'react-native'
 import { SafeAreaView } from 'react-navigation';
 import Colors from '../../constants/Colors';
 import Post from '../../components/home/Post';
@@ -29,28 +29,69 @@ let post = {
     }],
     dateCreated: new Date(Date.now() - 60 * 60 * 1000 * 36),
 }
-
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
 
 class Feed extends Component {
-    constructor(props) {
-        super(props);        
-        
-        this.state = {
-            posts: []
-        }
+    state = {
+        pageLoaded: 0,
+        posts: [],
+        isRefreshing: false,
+        isLoadingMore: false,
+        finishedFeed: false 
     }
 
     componentDidMount() {
         this.loadFeed();
     }
 
-    async loadFeed() {
-        let postIds = await PostController.GetFeed();
-        this.setState({postIds});
+    async loadMore() {
+        
+        if(this.state.finishedFeed || this.state.isLoadingMore)
+        {
+            return;
+        }
+        
+        if(this.state.posts.length > 0)
+        {            
+            this.setState({isLoadingMore: true}, async () => {
+                // await sleep(2000);
+                let lastPostDate = this.state.posts[this.state.posts.length-1].datePosted;
+                let posts = await PostController.GetFeedInfinite(lastPostDate);
+    
+                if(posts.length == 0)
+                {
+                    //no more posts
+                    this.setState({finishedFeed: true, isLoadingMore: false})
+                    return;
+                }
+    
+                this.setState({posts: [...this.state.posts, ...posts], isLoadingMore: false});
+            });
+        }
     }
 
-    post({ item: postId }) {
-        return <Post postId={postId} style={{ width: '100%' }} />
+    async refresh() {
+        this.setState({isRefreshing: true, pageLoaded: 0, finishedFeed: false});
+        let posts = await PostController.GetFeedHead();
+        // await sleep(2000);
+        this.setState({posts: posts || [], isRefreshing: false, finishedFeed: false});
+    }
+
+    async loadFeed() {
+        let posts = await PostController.GetFeedHead();
+        this.setState({posts: posts || []});
+    }
+
+    post({ item: post }) {
+        return <Post post={post} style={{ width: '100%' }} />
+    }
+
+    renderLoadingFooter() {
+        return (this.state.isLoadingMore && <View style={{height: 40, width: '100%'}}>
+            <ActivityIndicator/>
+        </View>)
     }
 
     render() {
@@ -65,10 +106,15 @@ class Feed extends Component {
             <View style={{height: 0.3, width: '100%', backgroundColor: 'gray', opacity: 0.4}}/>
             <View style={{ width: '100%', flex: 1 }}>
                 <FlatList
-                    data={this.state.postIds}
+                    data={this.state.posts}
                     renderItem={this.post}
-                    keyExtractor={(postIds, index) => `${postIds}`}
+                    keyExtractor={(post, index) => `${post._id}`}
                     style={{ backgroundColor: Colors.bgGray }}
+                    onRefresh={this.refresh.bind(this)}
+                    refreshing={this.state.isRefreshing}
+                    onEndReached={this.loadMore.bind(this)}
+                    onEndReachedThreshold={2}
+                    ListFooterComponent={this.renderLoadingFooter.bind(this)}
                 />
             </View>
         </SafeAreaView>

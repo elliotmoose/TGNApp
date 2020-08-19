@@ -19,10 +19,10 @@ class Post extends Component {
         
         let username = (post.user && post.user.username) || 'unknown_user' ;
         let profilePicture = (post.user && post.user.profilePicture) || null;
-        let postType = post.type || 'no_post_type';
+        let postType = post.postType || 'no_post_type';
         let postTarget = post.target && post.target.handle;
-        let isPastADay = post.dateCreated ? (Date.now() - post.dateCreated > 35*60*60*1000) : false;
-        let postTime = post.dateCreated ? (isPastADay ? moment(post.dateCreated).format("DD MMM YYYY") : moment(post.dateCreated).fromNow()) : '';
+        let isPastADay = post.datePosted ? (Date.now() - post.datePosted > 35*60*60*1000) : false;
+        let postTime = post.datePosted ? (isPastADay ? moment(post.datePosted).format("DD MMM YYYY") : moment(post.datePosted).fromNow()) : '';
 
         return <View style={{flexDirection: 'row', height: 50}}>
             <Image style={{backgroundColor: Colors.darkGray, height: '100%', aspectRatio: 1, borderRadius: 100}} source={{uri: profilePicture}}/>
@@ -51,12 +51,14 @@ class Post extends Component {
         let reactionCountSuffix = reactionCount == 1 ? '' : 's';
         let commentCount = post.commentCount || 0;
         let commentCountSuffix = commentCount == 1 ? '' : 's';
+        
+        let mostReacted = reactionCount == 0 ? null : (`reaction${post.maxReactionType[0].toUpperCase() + post.maxReactionType.substring(1)}`);
 
         return <View style={{marginTop: 24, flexDirection: 'row', height: 34}}>
             <TouchableOpacity style={{flexDirection: 'row', alignItems: 'center', height: 16, alignSelf: 'flex-end'}}>           
                 <View style={{flexDirection: 'row', alignItems: 'center', height: '100%'}}>
-                    <Image source={Images.reactionLove} style={{height: 16, width: 16}} resizeMode='contain'/>     
-                    <Text style={{fontSize: 12, fontWeight: '200', marginLeft: 4}}>{reactionCount} Reaction{reactionCountSuffix} • {commentCount} Comment{commentCountSuffix}</Text>
+                    {mostReacted && <Image source={Images[mostReacted]} style={{height: 16, width: 16}} resizeMode='contain'/>}
+                    <Text style={{fontSize: 12, fontWeight: '200', marginLeft: 4, marginTop: 3}}>{reactionCount} Reaction{reactionCountSuffix} • {commentCount} Comment{commentCountSuffix}</Text>
                 </View>
             </TouchableOpacity>
             <View style={{flex: 1}}/>
@@ -91,14 +93,14 @@ class Post extends Component {
         }
     }
 
-    async componentDidMount() {
-        let { postId } = this.props;                
-        let post = await PostController.GetPost(postId);
-        this.setState({post});
-    }
+    // async componentDidMount() {
+    //     let { post } = this.props;                
+    //     // let post = await PostController.GetFeedPost(postId);
+    //     this.setState({post});
+    // }
 
     render() {
-        let post = this.state.post || {};                
+        let post = this.props.post || {};                
         // let content = 'Faucibus scelerisque eleifend donec pretium vulputate sapien nec sagittis aliquam malesuada bibendum arcu vitae elementum curabitur vitae nunc sed velit Neque gravida in fermentum et sollicitudin ac orci phasellus egestas tellus rutrum tellus pellentesque eu tincidunt tortor aliquam nulla facilisi A condimentum vitae sapien pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas sed tempus urna phasellus vestibulum lorem sed risus ultricies tristique.';
 
         return (
