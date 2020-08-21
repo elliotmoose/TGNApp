@@ -38,7 +38,7 @@ export const PostController = {
                 return this.feedPostCache[postId];
             }
                         
-            let response = await Network.JsonRequest('GET',`/post/${postId}`);            
+            let response = await Network.JsonRequest('GET',`/posts/${postId}`);            
             this.feedPostCache[response._id] = response;
 
             return response;
@@ -55,7 +55,7 @@ export const PostController = {
                 return this.feedPostCache[postId];
             }
                         
-            let response = await Network.JsonRequest('GET',`/post/${postId}`);            
+            let response = await Network.JsonRequest('GET',`/posts/${postId}`);            
             this.feedPostCache[response._id] = response;
 
             return response;
@@ -64,10 +64,22 @@ export const PostController = {
             console.log(error);
         }        
     },
-    async ReactToPost(postId) {
+    async ReactToPost(postId, reactionType) {
+        try {
+            let response = await Network.JsonRequest('POST', `/posts/${postId}/react`, {reactionType});
+            console.log(response);
 
+        } catch (error) {
+            console.log('TODO: HANDLE ERROR:');
+            console.log(error);
+        }
     },
-    async UnreactToPost(postId) {
-
+    async UnreactToPost(postId, reactionType) {
+        try {
+            await Network.JsonRequest('POST', `/posts/${postId}/unreact`, {reactionType});
+        } catch (error) {
+            console.log('TODO: HANDLE ERROR:');
+            console.log(error);
+        }
     }
 }

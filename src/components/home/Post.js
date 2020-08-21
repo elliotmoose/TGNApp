@@ -3,11 +3,20 @@ import { View, Text, Image, TouchableOpacity } from 'react-native';
 import Colors from '../../constants/Colors';
 import Images from '../../helpers/Images';
 import moment from 'moment';
-import { PostController } from '../../api/Post';
+import { PostController } from '../../api/PostController';
+import PostHelper from '../../helpers/Post';
 
 class Post extends Component {
-    reactToPost(reactionType) {
-        console.log(reactionType);
+    async reactToPost(reactionType) {
+        let post = this.state.post;
+        let postId = post._id;
+        if(!this.state.post._id) 
+        {
+            console.error("Cannot React: This post component is not attached to a post");
+            return;
+        }
+
+        this.props.onReactToPost(postId, reactionType);        
     }
 
     postTag(tagName) {
@@ -45,14 +54,14 @@ class Post extends Component {
         </View>
     }
     
-    postReactions(post) {                
+    postReactions(post) {                        
         let myReactions = post.myReactions || [];
         let reactionCount = post.reactionCount || 0;
         let reactionCountSuffix = reactionCount == 1 ? '' : 's';
         let commentCount = post.commentCount || 0;
         let commentCountSuffix = commentCount == 1 ? '' : 's';
-        
-        let mostReacted = reactionCount == 0 ? null : (`reaction${post.maxReactionType[0].toUpperCase() + post.maxReactionType.substring(1)}`);
+        let maxReactionType = PostHelper.GetMaxReactionTypeFromPost(post);
+        let mostReacted = maxReactionType ? (`reaction${maxReactionType[0].toUpperCase() + maxReactionType.substring(1)}`) : null;
 
         return <View style={{marginTop: 24, flexDirection: 'row', height: 34}}>
             <TouchableOpacity style={{flexDirection: 'row', alignItems: 'center', height: 16, alignSelf: 'flex-end'}}>           
@@ -93,14 +102,14 @@ class Post extends Component {
         }
     }
 
-    // async componentDidMount() {
-    //     let { post } = this.props;                
-    //     // let post = await PostController.GetFeedPost(postId);
-    //     this.setState({post});
-    // }
+    async componentDidMount() {
+        let { post } = this.props;                
+        // let post = await PostController.GetFeedPost(postId);
+        this.setState({post});
+    }
 
     render() {
-        let post = this.props.post || {};                
+        let post = this.state.post || {};                
         // let content = 'Faucibus scelerisque eleifend donec pretium vulputate sapien nec sagittis aliquam malesuada bibendum arcu vitae elementum curabitur vitae nunc sed velit Neque gravida in fermentum et sollicitudin ac orci phasellus egestas tellus rutrum tellus pellentesque eu tincidunt tortor aliquam nulla facilisi A condimentum vitae sapien pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas sed tempus urna phasellus vestibulum lorem sed risus ultricies tristique.';
 
         return (

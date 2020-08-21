@@ -5,7 +5,7 @@ import Colors from '../../constants/Colors';
 import Post from '../../components/home/Post';
 import Images from '../../helpers/Images';
 import { Hitslop } from '../../constants/Sizing';
-import { PostController } from '../../api/Post';
+import { PostController } from '../../api/PostController';
 
 let post = {
     user: {
@@ -84,9 +84,35 @@ class Feed extends Component {
         this.setState({posts: posts || []});
     }
 
-    post({ item: post }) {
-        return <Post post={post} style={{ width: '100%' }} />
+    async onReactToPost(postId, reactionType) {
+        let posts = this.state.posts;
+        for(let post of posts)
+        {
+            if (post._id == postId) {
+                if (!post.myReactions) {                    
+                    return;
+                }
+
+                let hasReacted = post.myReactions && (post.myReactions.indexOf(reactionType) != -1);
+
+                if (hasReacted) {
+                    let index = post.myReactions.indexOf(reactionType);
+                    post.myReactions.splice(index, 1);
+
+                    await PostController.UnreactToPost(postId, reactionType);
+                }
+                else {
+                    post.myReactions.push(reactionType);
+                    await PostController.ReactToPost(postId, reactionType);
+                }
+
+                console.log(post.myReactions);
+                this.setState({ posts });
+                break;
+            }
+        }
     }
+
 
     renderLoadingFooter() {
         return (this.state.isLoadingMore && <View style={{height: 40, width: '100%'}}>
@@ -107,7 +133,7 @@ class Feed extends Component {
             <View style={{ width: '100%', flex: 1 }}>
                 <FlatList
                     data={this.state.posts}
-                    renderItem={this.post}
+                    renderItem={({item: post})=> <Post post={post} onReactToPost={this.onReactToPost.bind(this)} style={{ width: '100%' }} />}
                     keyExtractor={(post, index) => `${post._id}`}
                     style={{ backgroundColor: Colors.bgGray }}
                     onRefresh={this.refresh.bind(this)}
