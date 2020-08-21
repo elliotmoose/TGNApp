@@ -8,9 +8,9 @@ import PostHelper from '../../helpers/Post';
 
 class Post extends Component {
     async reactToPost(reactionType) {
-        let post = this.state.post;
+        let post = this.props.post;
         let postId = post._id;
-        if(!this.state.post._id) 
+        if(!postId) 
         {
             console.error("Cannot React: This post component is not attached to a post");
             return;
@@ -93,23 +93,23 @@ class Post extends Component {
         return <View/>
     }
 
-    constructor(props) {
-        super(props);
-        this.state = {
-            post : {
+    // constructor(props) {
+    //     super(props);
+    //     this.state = {
+    //         post : {
         
-            }
-        }
-    }
+    //         }
+    //     }
+    // }
 
-    async componentDidMount() {
-        let { post } = this.props;                
-        // let post = await PostController.GetFeedPost(postId);
-        this.setState({post});
-    }
+    // async componentDidMount() {
+    //     let { post } = this.props;                
+    //     // let post = await PostController.GetFeedPost(postId);
+    //     this.setState({post});
+    // }
 
     render() {
-        let post = this.state.post || {};                
+        let post = this.props.post || {};                
         // let content = 'Faucibus scelerisque eleifend donec pretium vulputate sapien nec sagittis aliquam malesuada bibendum arcu vitae elementum curabitur vitae nunc sed velit Neque gravida in fermentum et sollicitudin ac orci phasellus egestas tellus rutrum tellus pellentesque eu tincidunt tortor aliquam nulla facilisi A condimentum vitae sapien pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas sed tempus urna phasellus vestibulum lorem sed risus ultricies tristique.';
 
         return (
