@@ -63,7 +63,9 @@ class Post extends Component {
         let maxReactionType = PostHelper.GetMaxReactionTypeFromPost(post);
         let mostReacted = maxReactionType ? (`reaction${maxReactionType[0].toUpperCase() + maxReactionType.substring(1)}`) : null;
 
-        return <View style={{marginTop: 24, flexDirection: 'row', height: 34}}>
+        const reactionButtonSize = 28;
+
+        return <View style={{marginTop: 24, flexDirection: 'row', height: reactionButtonSize}}>
             <TouchableOpacity style={{flexDirection: 'row', alignItems: 'center', height: 16, alignSelf: 'flex-end'}}>           
                 <View style={{flexDirection: 'row', alignItems: 'center', height: '100%'}}>
                     {mostReacted && <Image source={Images[mostReacted]} style={{height: 16, width: 16}} resizeMode='contain'/>}
@@ -89,35 +91,43 @@ class Post extends Component {
         </View>
     }
 
-    postComments() {
-        return <View/>
+    postComments(post) {
+        let {comments, commentCount} = post;
+
+        if(!comments || (comments && comments.length == 0) || commentCount == 0)
+        {
+            return <View/>
+        }
+
+        const commentFontSize = 12;
+        return <View style={{marginTop: 14}}>
+            
+            <View style={{backgroundColor: Colors.gray, height: 1, borderRadius: 10, width: '100%', marginBottom: 6}}/>
+
+            {comments.slice().reverse().map((comment, index) => {
+                return <View style={{flexDirection: 'row', marginTop: 6, marginHorizontal: 4}} key={comment._id}>                    
+                    <Text style={{fontSize: commentFontSize}}>
+                        <Text style={{fontWeight:'bold'}}>{comment.user.username} </Text>
+                        {comment.content}
+                    </Text>
+                </View>
+            })}
+
+            <TouchableOpacity style={{alignSelf: 'flex-end'}}>
+                <Text>View all {commentCount} comments</Text>
+            </TouchableOpacity>
+        </View>
     }
 
-    // constructor(props) {
-    //     super(props);
-    //     this.state = {
-    //         post : {
-        
-    //         }
-    //     }
-    // }
-
-    // async componentDidMount() {
-    //     let { post } = this.props;                
-    //     // let post = await PostController.GetFeedPost(postId);
-    //     this.setState({post});
-    // }
 
     render() {
         let post = this.props.post || {};                
-        // let content = 'Faucibus scelerisque eleifend donec pretium vulputate sapien nec sagittis aliquam malesuada bibendum arcu vitae elementum curabitur vitae nunc sed velit Neque gravida in fermentum et sollicitudin ac orci phasellus egestas tellus rutrum tellus pellentesque eu tincidunt tortor aliquam nulla facilisi A condimentum vitae sapien pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas sed tempus urna phasellus vestibulum lorem sed risus ultricies tristique.';
-
         return (
             <View style={{backgroundColor: 'white', marginBottom: 20, padding: 16}} {...this.props.style}>
                 {this.postHeader(post)}                
                 {this.postContent(post.content)}
                 {this.postReactions(post)}                
-                {this.postComments()}
+                {this.postComments(post)}
             </View>
         );
     }

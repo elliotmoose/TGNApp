@@ -37,6 +37,7 @@ class Feed extends Component {
     state = {
         pageLoaded: 0,
         posts: [],
+        postMap: {}, //for fast retrieval
         isRefreshing: false,
         isLoadingMore: false,
         finishedFeed: false 
@@ -66,8 +67,9 @@ class Feed extends Component {
                     this.setState({finishedFeed: true, isLoadingMore: false})
                     return;
                 }
-    
-                this.setState({posts: [...this.state.posts, ...posts], isLoadingMore: false});
+                
+                this.setPosts([...this.state.posts, ...posts]);
+                this.setState({isLoadingMore: false});
             });
         }
     }
@@ -76,41 +78,59 @@ class Feed extends Component {
         this.setState({isRefreshing: true, pageLoaded: 0, finishedFeed: false});
         let posts = await PostController.GetFeedHead();
         // await sleep(2000);
-        this.setState({posts: posts || [], isRefreshing: false, finishedFeed: false});
+        this.setPosts(posts);
+        this.setState({isRefreshing: false, finishedFeed: false});
     }
 
     async loadFeed() {
         let posts = await PostController.GetFeedHead();
-        this.setState({posts: posts || []});
+        this.setPosts(posts);
+    }
+    
+    setPosts(posts) {
+        //setup dictionary
+        let postMap = {}
+        posts.forEach(post => {
+            postMap[post._id] = post;
+        });
+
+        this.setState({
+            posts: posts || [],
+            postMap
+        });        
     }
 
     async onReactToPost(postId, reactionType) {
         let posts = this.state.posts;
-        for(let post of posts)
-        {
-            if (post._id == postId) {
-                if (!post.myReactions) {                    
-                    return;
-                }
+        let post = this.state.postMap[postId];
 
-                let hasReacted = post.myReactions && (post.myReactions.indexOf(reactionType) != -1);
-
-                if (hasReacted) {
-                    let index = post.myReactions.indexOf(reactionType);
-                    post.myReactions.splice(index, 1);
-
-                    await PostController.UnreactToPost(postId, reactionType);
-                }
-                else {
-                    post.myReactions.push(reactionType);
-                    await PostController.ReactToPost(postId, reactionType);
-                }
-
-                console.log(post.myReactions);
-                this.setState({ posts });
-                break;
-            }
+        if(!post){
+            console.error('could not find post');
         }
+        if (!post.myReactions) {                    
+            console.error('malformed post');
+            return;
+        }
+
+        let hasReacted = post.myReactions && (post.myReactions.indexOf(reactionType) != -1);
+
+        if (hasReacted) {
+            let index = post.myReactions.indexOf(reactionType);
+            post.myReactions.splice(index, 1);
+            
+            post.reactionCount -= 1;
+            post[`${reactionType}ReactionCount`] -= 1;
+            await PostController.UnreactToPost(postId, reactionType);
+        }
+        else {
+            post.reactionCount += 1;
+            post[`${reactionType}ReactionCount`] += 1;
+            post.myReactions.push(reactionType);
+            await PostController.ReactToPost(postId, reactionType);
+        }
+
+        this.setPosts(posts);
+    
     }
 
 
