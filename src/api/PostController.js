@@ -34,7 +34,6 @@ export const PostController = {
     },
     async GetFeedInfinite(lastPostDate) {
         try {
-            console.log(lastPostDate);
             let beforeQuery = lastPostDate ? `&before=${lastPostDate}` : '';
             let response = await Network.JsonRequest('GET',`/feed?limit=${FEED_POST_PAGE_SIZE}` + beforeQuery);
             return response || [];

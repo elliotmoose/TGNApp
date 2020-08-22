@@ -20,9 +20,10 @@ class Post extends Component {
         this.props.onReactToPost(postId, reactionType);        
     }
 
-    postTag(tagName) {
+    postTypeTag(tagName) {
+        let postType = tagName[0].toUpperCase() + tagName.substr(1).toLowerCase();
         return <View style={{backgroundColor: Colors.blue, borderRadius: 100, justifyContent: 'center', alignItems: 'center', padding: 2, paddingHorizontal: 10, alignSelf: 'flex-start'}}>
-            <Text style={{color: 'white', fontSize: 11, fontWeight: 'bold'}}>{tagName}</Text>
+            <Text style={{color: 'white', fontSize: 11, fontWeight: 'bold'}}>{postType}</Text>
         </View>
     }
     postHeader(post) {
@@ -40,7 +41,7 @@ class Post extends Component {
             <View style={{flexDirection: 'column', height: '100%', justifyContent: 'space-between', marginLeft: 9, padding: 4, flex: 1}}>
                 <Text style={{fontSize: 18, fontWeight: 'bold'}}>{username}</Text>
                 <View style={{width: '100%'}}>
-                    {this.postTag(postType)}
+                    {this.postTypeTag(postType)}
                 </View>
             </View>
             <View style={{flexDirection: 'column', height: '100%', marginLeft: 9, paddingTop: 7, paddingRight: 4}}>
