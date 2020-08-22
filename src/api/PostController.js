@@ -9,6 +9,20 @@ export const PostController = {
     postDetailCache: {
 
     },
+    async MakePost(content, postType, targetId) {
+        try {
+            let body = {content, postType};
+            if(targetId) {
+                body.target = targetId;
+            }
+
+            let response = await Network.JsonRequest('POST', '/posts', body);
+            return response;
+        } catch (error) {
+            console.log('TODO: HANDLE ERROR:');
+            console.error(error);            
+        }
+    },
     async GetFeedHead() {
         try {
             let response = await Network.JsonRequest('GET',`/feed?limit=${FEED_POST_PAGE_SIZE}`);

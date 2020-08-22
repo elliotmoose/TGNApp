@@ -4,15 +4,17 @@ import ModalHeader from './ModalHeader';
 import Colors from '../constants/Colors';
 import { Screen } from '../constants/Sizing';
 import Images from '../helpers/Images';
+import { PostController } from '../api/PostController';
 
 class CreateModal extends Component {
 
 	state = {
-		target: {
-			_id: '12345689',
-			name: 'Bethel AOG',
-			handle: 'bethelaog',
-		},
+		// target: {
+		// 	_id: '12345689',
+		// 	name: 'Bethel AOG',
+		// 	handle: 'bethelaog',
+		// },
+		postType: 'testimony',
 		postContent: ''
 	}
 	
@@ -111,8 +113,8 @@ class CreateModal extends Component {
 		</TextInput>
 	}
 
-	publish() {
-
+	async publish(content, postType, targetId) {
+		await PostController.MakePost(content, postType, targetId);
 	}
 
 	render() {
@@ -123,9 +125,10 @@ class CreateModal extends Component {
 			}}
 				rightAction={{
 					title: 'Share',
-					action: () => {
+					action: async () => {						
+						await this.publish(this.state.postContent, this.state.postType, this.state.target && this.state.target._id || null);
+						//TODO: trycatch error if any
 						this.props.navigation.goBack();
-
 					}
 				}}
 				middleAction={{
