@@ -1,8 +1,8 @@
 const Colors = {
     primary: '#9B51E0',
     themeBlack : '#2E2B34',
-    offWhite : '#F2F2F2',
-    lightgray : '#E4E4E4',
+    offWhite : '#F0F0F0',
+    lightgray : '#F9F9F9',
     mediumGray : '#D1D1D1',
     darkGray : '#4A4A4A',
     fontGray: '#6C6C6C',
@@ -17,7 +17,7 @@ const Colors = {
     sectionRowText: '#2E2B34',
     progressionRow: '#EFEFEF',
     red: '#BE4242',
-    blue: '#65E3FF',
+    blue: '#2D9CDB',
     green: '#41A57C',
     greenDown: '#32805F'
 }

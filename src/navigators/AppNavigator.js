@@ -9,7 +9,7 @@ import Colors from '../constants/Colors';
 import Explore from '../screens/Explore';
 import Notifications from '../screens/Notifications';
 import MyWall from '../screens/MyWall';
-import CreateModal from '../modals/CreateScreen';
+import CreateModal from '../modals/CreateModal';
 
 const Tab = createBottomTabNavigator();
 const RootStack = createStackNavigator();
@@ -50,7 +50,6 @@ function AppScreen() {
     <Tab.Screen name="Explore" component={Explore}/>
     <Tab.Screen name="Create" component={Explore} listeners={({ navigation, route }) => ({
         tabPress: e => {
-            console.log('TODO: push create modal');                
             e.preventDefault();
             navigation.navigate('CreateModal');
         },
@@ -64,7 +63,7 @@ export default class AppNavigator extends React.Component {
     render() {
         return <NavigationContainer>
             <RootStack.Navigator mode='modal'>                
-                <RootStack.Screen name="AppScreen" component={AppScreen}  options={{ headerShown: false }}/>
+                {/* <RootStack.Screen name="AppScreen" component={AppScreen}  options={{ headerShown: false }}/> */}
                 <RootStack.Screen name="CreateModal" component={CreateModal} options={{ headerShown: false }}/>
             </RootStack.Navigator>
             {/* <Stack.Navigator>

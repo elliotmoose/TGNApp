@@ -5,7 +5,10 @@ console.log(Dimensions.get('window').width)
 console.log(Dimensions.get('window').height)
 
 const SIZING_STORAGE_KEY = 'SIZING_STORAGE_KEY'
-
+export var Screen = {
+    height: Dimensions.get('window').height,
+    width: Dimensions.get('window').width
+}
 export var Hitslop = (amt)=>{
     return {top: amt, left: amt, right: amt, bottom: amt}
 }
