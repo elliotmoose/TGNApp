@@ -7,9 +7,7 @@ const Stack = createStackNavigator();
 export default class HomeNavigator extends Component {
     render() {
         return <Stack.Navigator>
-            <Stack.Screen name="Feed" component={Feed} options={{
-                header: ()=>null,
-            }}/>
+            <Stack.Screen name="Feed" component={Feed} options={{ headerShown: false }}/>
         </Stack.Navigator>
     }
 }

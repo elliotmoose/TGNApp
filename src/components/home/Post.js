@@ -5,6 +5,7 @@ import Images from '../../helpers/Images';
 import moment from 'moment';
 import { PostController } from '../../api/PostController';
 import PostHelper from '../../helpers/Post';
+import ImageLoader from '../../api/ImageLoader';
 
 class Post extends Component {
     async reactToPost(reactionType) {
@@ -27,7 +28,8 @@ class Post extends Component {
     postHeader(post) {
         
         let username = (post.user && post.user.username) || 'unknown_user' ;
-        let profilePicture = (post.user && post.user.profilePicture) || null;
+        let profilePicture = ImageLoader.LoadProfilePicture(post.user.username);
+        // let profilePicture = (post.user && post.user.profilePicture) || null;
         let postType = post.postType || 'no_post_type';
         let postTarget = post.target && post.target.handle;
         let isPastADay = post.datePosted ? ((Date.now() - (+new Date(post.datePosted))) > 35*60*60*1000) : false;
