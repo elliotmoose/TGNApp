@@ -30,7 +30,7 @@ class Post extends Component {
         let profilePicture = (post.user && post.user.profilePicture) || null;
         let postType = post.postType || 'no_post_type';
         let postTarget = post.target && post.target.handle;
-        let isPastADay = post.datePosted ? (Date.now() - post.datePosted > 35*60*60*1000) : false;
+        let isPastADay = post.datePosted ? ((Date.now() - (+new Date(post.datePosted))) > 35*60*60*1000) : false;
         let postTime = post.datePosted ? (isPastADay ? moment(post.datePosted).format("DD MMM YYYY") : moment(post.datePosted).fromNow()) : '';
 
         return <View style={{flexDirection: 'row', height: 50}}>
@@ -41,9 +41,9 @@ class Post extends Component {
                     {this.postTag(postType)}
                 </View>
             </View>
-            <View style={{flexDirection: 'column', height: '100%', justifyContent: 'center', marginLeft: 9, padding: 4}}>
+            <View style={{flexDirection: 'column', height: '100%', marginLeft: 9, paddingTop: 7, paddingRight: 4}}>
                 {postTarget && <Text style={{fontSize: 15, fontWeight: '200', alignSelf: 'flex-end', marginBottom: 3}}>@{postTarget}</Text>}
-                <Text style={{fontSize: 12, fontWeight: '200', alignSelf: 'flex-end'}}>{postTime}</Text>    
+                <Text style={{fontSize: 12, fontWeight: '200', alignSelf: 'flex-end', marginTop: 2}}>{postTime}</Text>    
             </View>
         </View>;
     }
