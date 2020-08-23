@@ -6,10 +6,18 @@ import moment from 'moment';
 import { PostController } from '../../api/PostController';
 import PostHelper from '../../helpers/Post';
 import ImageLoader from '../../api/ImageLoader';
+import { useNavigation, useRoute } from '@react-navigation/native';
 
-class Post extends Component {
-    async reactToPost(reactionType) {
-        let post = this.props.post;
+export default function PostBody(props) {    
+
+    const navigation = useNavigation();
+
+    let viewPostDetail = function() {
+        navigation.navigate('PostDetailScreen', {post: props.post});
+    }
+
+    let reactToPost = async function(reactionType) {
+        let post = props.post;
         let postId = post._id;
         if(!postId) 
         {
@@ -17,19 +25,19 @@ class Post extends Component {
             return;
         }
 
-        this.props.onReactToPost(postId, reactionType);        
+        props.onReactToPost(postId, reactionType);        
     }
 
-    postTypeTag(tagName) {
+    let renderPostType = function (tagName) {
         let postType = tagName[0].toUpperCase() + tagName.substr(1).toLowerCase();
         return <View style={{backgroundColor: Colors.blue, borderRadius: 100, justifyContent: 'center', alignItems: 'center', padding: 2, paddingHorizontal: 10, alignSelf: 'flex-start'}}>
             <Text style={{color: 'white', fontSize: 11, fontWeight: 'bold'}}>{postType}</Text>
         </View>
     }
-    postHeader(post) {
-        
+    
+    let renderPostHeader = function (post) {        
         let username = (post.user && post.user.username) || 'unknown_user' ;
-        let profilePicture = ImageLoader.LoadProfilePicture(post.user.username);
+        let profilePicture = post.user && ImageLoader.LoadProfilePicture(post.user.username);
         // let profilePicture = (post.user && post.user.profilePicture) || null;
         let postType = post.postType || 'no_post_type';
         let postTarget = post.target && post.target.handle;
@@ -41,7 +49,7 @@ class Post extends Component {
             <View style={{flexDirection: 'column', height: '100%', justifyContent: 'space-between', marginLeft: 9, padding: 4, flex: 1}}>
                 <Text style={{fontSize: 18, fontWeight: 'bold'}}>{username}</Text>
                 <View style={{width: '100%'}}>
-                    {this.postTypeTag(postType)}
+                    {renderPostType(postType)}
                 </View>
             </View>
             <View style={{flexDirection: 'column', height: '100%', marginLeft: 9, paddingTop: 7, paddingRight: 4}}>
@@ -51,13 +59,13 @@ class Post extends Component {
         </View>;
     }
 
-    postContent(content) {
+    let renderPostContent = function (content) {
         return <View style={{marginTop: 12}}>
             <Text style={{fontWeight: '400'}}>{content}</Text>
         </View>
     }
     
-    postReactions(post) {                        
+    let renderPostReaction = function (post) {                        
         let myReactions = post.myReactions || [];
         let reactionCount = post.reactionCount || 0;
         let reactionCountSuffix = reactionCount == 1 ? '' : 's';
@@ -69,7 +77,7 @@ class Post extends Component {
         const reactionButtonSize = 28;
 
         return <View style={{marginTop: 24, flexDirection: 'row', height: reactionButtonSize}}>
-            <TouchableOpacity style={{flexDirection: 'row', alignItems: 'center', height: 16, alignSelf: 'flex-end'}}>           
+            <TouchableOpacity style={{flexDirection: 'row', alignItems: 'center', height: 16, alignSelf: 'flex-end'}} onPress={viewPostDetail}>           
                 <View style={{flexDirection: 'row', alignItems: 'center', height: '100%'}}>
                     {mostReacted && <Image source={Images[mostReacted]} style={{height: 16, width: 16}} resizeMode='contain'/>}
                     <Text style={{fontSize: 12, fontWeight: '200', marginLeft: 4, marginTop: 3}}>{reactionCount} Reaction{reactionCountSuffix} • {commentCount} Comment{commentCountSuffix}</Text>
@@ -81,9 +89,7 @@ class Post extends Component {
                     let hasReacted = (myReactions.indexOf(key) != -1);
 
                     let imageTitle = `reaction${key[0].toUpperCase() + key.substring(1)}`;
-                    return <TouchableOpacity key={index} style={{height: '100%', aspectRatio: 1, marginLeft: 4}} onPress={()=>{
-                        this.reactToPost(key);
-                    }}>           
+                    return <TouchableOpacity key={index} style={{height: '100%', aspectRatio: 1, marginLeft: 4}} onPress={()=>reactToPost(key)}>           
                         <Image source={Images[imageTitle]} style={{height: '100%', aspectRatio: 1,
                         tintColor: hasReacted ? null : 'gray',
                         opacity: hasReacted ? 1 : 0.2,
@@ -92,48 +98,15 @@ class Post extends Component {
                 })
             }
         </View>
-    }
+    }    
+    
+    let post = props.post;
 
-    postComments(post) {
-        let {comments, commentCount} = post;
-
-        if(!comments || (comments && comments.length == 0) || commentCount == 0)
-        {
-            return <View/>
-        }
-
-        const commentFontSize = 12;
-        return <View style={{marginTop: 14}}>
-            
-            <View style={{backgroundColor: Colors.gray, height: 1, borderRadius: 10, width: '100%', marginBottom: 6}}/>
-
-            {comments.slice().reverse().map((comment, index) => {
-                return <View style={{flexDirection: 'row', marginTop: 6, marginHorizontal: 4}} key={comment._id}>                    
-                    <Text style={{fontSize: commentFontSize}}>
-                        <Text style={{fontWeight:'bold'}}>{comment.user.username} </Text>
-                        {comment.content}
-                    </Text>
-                </View>
-            })}
-
-            <TouchableOpacity style={{alignSelf: 'flex-end'}}>
-                <Text>View all {commentCount} comments</Text>
-            </TouchableOpacity>
+    return (
+        <View style={{backgroundColor: 'white'}}>
+            {renderPostHeader(post)}                
+            {renderPostContent(post.content)}
+            {renderPostReaction(post)}                
         </View>
-    }
-
-
-    render() {
-        let post = this.props.post || {};                
-        return (
-            <View style={{backgroundColor: 'white', marginBottom: 20, padding: 16}} {...this.props.style}>
-                {this.postHeader(post)}                
-                {this.postContent(post.content)}
-                {this.postReactions(post)}                
-                {this.postComments(post)}
-            </View>
-        );
-    }
+    );
 }
-
-export default Post;

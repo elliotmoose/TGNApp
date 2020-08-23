@@ -64,7 +64,7 @@ export default class AppNavigator extends React.Component {
         return <NavigationContainer>
             <RootStack.Navigator mode='modal'>                
                 <RootStack.Screen name="AppScreen" component={AppScreen}  options={{ headerShown: false }}/>
-                <RootStack.Screen name="CreateModal" component={CreateModal} options={{ headerShown: false }}/>
+                <RootStack.Screen name="CreateModal" component={CreateModal} options={{ headerShown: false }}/>                
             </RootStack.Navigator>
             {/* <Stack.Navigator>
             </Stack.Navigator> */}
