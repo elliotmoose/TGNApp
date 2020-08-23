@@ -1,15 +1,19 @@
 import Network from '../helpers/Network';
 import store from '../store';
-import { SetFeed, AppendFeed } from '../store/actions/PostsActions';
+import { SetFeed, AppendFeed, UpdateFeedPostById } from '../store/actions/PostsActions';
 
 const FEED_POST_PAGE_SIZE = 8;
 
-export const PostController = {
-    feedPostCache: {
-
+export const PostController = {    
+    GetFeedPosts() {
+        let posts = store.getState().posts.feed || [];
+        return posts;
     },
-    postDetailCache: {
-
+    GetPostById(postId) {
+        return store.getState().posts.feedMap[postId];
+    },
+    UpdatePostById(postId, newPostData) {
+        store.dispatch(UpdateFeedPostById(postId, newPostData));
     },
     async MakePost(content, postType, targetId) {
         try {
@@ -37,7 +41,7 @@ export const PostController = {
     },
     async LoadFeedNext() {
         try {
-            let posts = store.getState().posts.feed || [];
+            let posts = this.GetFeedPosts();
             if(!posts) {
                 let response = await this.LoadFeed();
                 return response;
@@ -48,13 +52,14 @@ export const PostController = {
             let response = await Network.JsonRequest('GET',`/feed?limit=${FEED_POST_PAGE_SIZE}` + beforeQuery);
 
             store.dispatch(AppendFeed(response));
+
             return response || [];
         } catch (error) {
             console.log('TODO: HANDLE ERROR:');
             console.log(error);
         }        
     },
-    async GetFeedPost(postId) {
+    async LoadFeedPost(postId) {
         console.log(`getting post: ${postId}`);
         try {
             if(this.feedPostCache[postId])
@@ -91,24 +96,45 @@ export const PostController = {
     },
     async ReactToPost(postId, reactionType) {
         try {
-            let response = await Network.JsonRequest('POST', `/posts/${postId}/react`, {reactionType});
-            console.log(response);
+            // let posts = this.GetFeedPosts();
+            let post = this.GetPostById(postId);
 
-        } catch (error) {
-            console.log('TODO: HANDLE ERROR:');
-            console.log(error);
-        }
-    },
-    async UnreactToPost(postId, reactionType) {
-        try {
-            await Network.JsonRequest('POST', `/posts/${postId}/unreact`, {reactionType});
+            if(!post){
+                console.error('could not find post');
+            }
+
+            if (!post.myReactions) {                    
+                console.error('malformed post');
+                return;
+            }
+
+            let hasReacted = post.myReactions && (post.myReactions.indexOf(reactionType) != -1);
+
+            if (hasReacted) {
+                let index = post.myReactions.indexOf(reactionType);
+                post.myReactions.splice(index, 1);
+                
+                post.reactionCount -= 1;
+                post[`${reactionType}ReactionCount`] -= 1;
+                this.UpdatePostById(postId, post);
+                
+                //send to server
+                await Network.JsonRequest('POST', `/posts/${postId}/unreact`, {reactionType});
+            }
+            else {
+                post.reactionCount += 1;
+                post[`${reactionType}ReactionCount`] += 1;
+                post.myReactions.push(reactionType);
+                this.UpdatePostById(postId, post);
+
+                //send to server
+                await Network.JsonRequest('POST', `/posts/${postId}/react`, {reactionType});
+            }
         } catch (error) {
             console.log('TODO: HANDLE ERROR:');
             console.log(error);
         }
     }
-
-
     // async onReactToPost(postId, reactionType) {
     //     let posts = this.state.posts;
     //     let post = this.state.postMap[postId];

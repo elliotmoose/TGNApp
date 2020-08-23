@@ -25,7 +25,8 @@ export default function PostBody(props) {
             return;
         }
 
-        props.onReactToPost(postId, reactionType);        
+        PostController.ReactToPost(postId, reactionType);
+        // props.onReactToPost(postId, reactionType);        
     }
 
     let renderPostType = function (tagName) {

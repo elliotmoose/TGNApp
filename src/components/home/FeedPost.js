@@ -8,6 +8,8 @@ import PostHelper from '../../helpers/Post';
 import ImageLoader from '../../api/ImageLoader';
 import PostBody from './PostBody';
 import { useNavigation } from '@react-navigation/native';
+import store from '../../store';
+import { connect, useStore, useSelector } from 'react-redux';
 
 export default function FeedPost(props) {
 
@@ -43,7 +45,12 @@ export default function FeedPost(props) {
         </View>
     }
 
-    let post = props.post || {};
+    let propPost = props.post || {};
+    let postId = propPost._id;
+    console.log(`rerender for post: ${postId}`);
+    
+    let post = useSelector(state => state.posts.feedMap[postId]);
+
     return (
         <View style={{ backgroundColor: 'white', marginBottom: 20, padding: 16 }} {...props.style}>
             <PostBody post={post} />
