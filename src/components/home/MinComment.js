@@ -1,7 +1,7 @@
 import React from 'react';
 import { Text, View } from 'react-native';
 
-export default function Comment ({comment}) {
+export default function MinComment ({comment}) {
     let {content, user} = comment;
 
     const commentFontSize = 12;

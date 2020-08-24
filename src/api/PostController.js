@@ -1,6 +1,7 @@
 import Network from '../helpers/Network';
 import store from '../store';
 import { SetFeed, AppendFeed, UpdateFeedPostById } from '../store/actions/PostsActions';
+import PostsReducer from '../store/reducers/PostsReducer';
 
 const FEED_POST_PAGE_SIZE = 8;
 
@@ -59,23 +60,33 @@ export const PostController = {
             console.log(error);
         }        
     },
-    async LoadFeedPost(postId) {
-        console.log(`getting post: ${postId}`);
-        try {
-            if(this.feedPostCache[postId])
-            {
-                console.log('found in cache');
-                return this.feedPostCache[postId];
-            }
+    // async LoadFeedPost(postId) {
+    //     console.log(`getting post: ${postId}`);
+    //     try {
+    //         if(this.feedPostCache[postId])
+    //         {
+    //             console.log('found in cache');
+    //             return this.feedPostCache[postId];
+    //         }
                         
-            let response = await Network.JsonRequest('GET',`/posts/${postId}`);            
-            this.feedPostCache[response._id] = response;
+    //         let response = await Network.JsonRequest('GET',`/posts/${postId}`);            
+    //         this.feedPostCache[response._id] = response;
 
-            return response;
+    //         return response;
+    //     } catch (error) {
+    //         console.log('TODO: HANDLE ERROR:');
+    //         console.log(error);
+    //     }        
+    // },
+    async LoadComments(postId) {
+        try {
+            let comments = await Network.JsonRequest('GET',`/posts/${postId}/comments`);            
+            console.log(`Loaded ${comments.length} comments`);
+            return comments;
         } catch (error) {
             console.log('TODO: HANDLE ERROR:');
             console.log(error);
-        }        
+        }
     },
     async CommentOnPost(postId) {
         try {

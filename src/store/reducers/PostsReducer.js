@@ -28,12 +28,10 @@ const PostsReducer = (state = initialState, action) => {
         }
         case UPDATE_FEEDPOST: {
             let postsCopy = state.feed;
-            // let feedMapCopy = JSON.parse(JSON.stringify(state.feedMap));
             let feedMap = state.feedMap;
             let postId = action.postId;
             let newPostData = JSON.parse(JSON.stringify(action.postData));
             
-            console.log(`Updating: ${postId}`);
             let indexOfPostToUpdate = postsCopy.findIndex((post)=>post._id == postId);
             postsCopy[indexOfPostToUpdate] = newPostData;
             

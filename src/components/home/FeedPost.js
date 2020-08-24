@@ -47,7 +47,7 @@ export default function FeedPost(props) {
 
     let propPost = props.post || {};
     let postId = propPost._id;
-    console.log(`rerender for post: ${postId}`);
+    // console.log(`rerender for post: ${postId}`);
     
     let post = useSelector(state => state.posts.feedMap[postId]);
 

@@ -7,6 +7,7 @@ import { PostController } from '../../api/PostController';
 import PostHelper from '../../helpers/Post';
 import ImageLoader from '../../api/ImageLoader';
 import { useNavigation, useRoute } from '@react-navigation/native';
+import { RelativeDate } from '../../helpers/DateHelper';
 
 export default function PostBody(props) {    
 
@@ -42,8 +43,7 @@ export default function PostBody(props) {
         // let profilePicture = (post.user && post.user.profilePicture) || null;
         let postType = post.postType || 'no_post_type';
         let postTarget = post.target && post.target.handle;
-        let isPastADay = post.datePosted ? ((Date.now() - (+new Date(post.datePosted))) > 35*60*60*1000) : false;
-        let postTime = post.datePosted ? (isPastADay ? moment(post.datePosted).format("DD MMM YYYY") : moment(post.datePosted).fromNow()) : '';
+        let postTime = RelativeDate(post.datePosted);
 
         return <View style={{flexDirection: 'row', height: 50}}>
             <Image style={{backgroundColor: Colors.darkGray, height: '100%', aspectRatio: 1, borderRadius: 100}} source={{uri: profilePicture}}/>

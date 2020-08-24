@@ -1,46 +1,58 @@
-import React, { Component } from 'react';
+import React, { Component, useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, Image, TextInput } from 'react-native';
-import ModalHeader from '../../modals/ModalHeader';
 import Colors from '../../constants/Colors';
-import { Screen } from '../../constants/Sizing';
-import Images from '../../helpers/Images';
 import { PostController } from '../../api/PostController';
 import PostBody from '../../components/home/PostBody';
-import Comment from '../../components/home/Comment';
+import { FlatList } from 'react-native-gesture-handler';
+import FullComment from '../../components/home/FullComment';
 
 export default function PostDetailScreen(props) {
-	let onReactToPost = async function (postId, reactionType) {
-		
-	}
-
-	let renderComments = function(comments) {
-
-        if(!comments || (comments && comments.length == 0))
-        {
-            return <View/>
-        }
-
-        const commentFontSize = 12;
-        return <View style={{marginTop: 14}}>
-            
-            <View style={{backgroundColor: Colors.gray, height: 1, borderRadius: 10, width: '100%', marginBottom: 6}}/>
-            {comments.slice().reverse().map((comment, index) => {
-                return <Comment key={comment._id} comment={comment}/>
-            })}
-        </View>
-	}
-
 	let post = props.route.params.post;
-	let comments = (post && post.comments) || [];
+	
+	if(!post) {
+		return <View/>;
+	}
 
-	return <View style={{ flex: 1, backgroundColor: 'white'}}>
-		<View style={{padding: 16 }}>
-			<PostBody
-				post={post}
-				onRequestViewPostDetail={() => { }}
-				style={{ width: '100%' }}
-			/>
-			{renderComments(comments)}
-		</View>
+	let postId = post._id;
+	let [comments, setComments] = useState([]);
+	let [isLoading, setIsLoading] = useState(false);
+
+	//componentDidMount => Get comments
+	useEffect(()=>{
+		setIsLoading(true);
+	});
+
+	useEffect(() => {
+		if (isLoading) {
+			const loadComments = async () => {
+				let comments = await PostController.LoadComments(postId) || [];
+				setComments(comments);
+				setIsLoading(false);
+			}
+	
+			loadComments();
+		}
+	}, [isLoading])
+	
+	let postItem = {_id: postId}	
+
+	return <View style={{ flex: 1, backgroundColor: Colors.offWhite}}>		
+		<FlatList 
+			data={[postItem, ...comments]}
+			renderItem={({item}) => {
+				if(item === postItem) {
+					return <View style={{padding: 16, backgroundColor: 'white' }}>
+					<PostBody
+						post={post}
+						style={{ width: '100%'}}
+					/>
+				</View>
+				}
+				else {
+					return <FullComment comment={item} style={{paddingLeft: 16, paddingTop: 18,  paddingBottom: 10}}/>
+				}
+			}}
+			keyExtractor={(item)=>item._id}
+		/>	
 	</View>
 }
