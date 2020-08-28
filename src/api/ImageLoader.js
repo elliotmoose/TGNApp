@@ -12,7 +12,7 @@ const ImageLoader = {
             case 'lywjoel':
                 return 'https://scontent.fsin2-1.fna.fbcdn.net/v/t1.0-9/78312326_10216417014319061_3502839120319741952_n.jpg?_nc_cat=106&_nc_sid=85a577&_nc_ohc=c72lPyKg8PMAX8ZzqKW&_nc_ht=scontent.fsin2-1.fna&oh=1b1d724cc74f0f90ff4b6f997bff288e&oe=5F702199'
             case 'llpofwy':
-                return 'https://scontent.fsin2-1.fna.fbcdn.net/v/t1.30497-1/c59.0.200.200a/p200x200/84688533_170842440872810_7559275468982059008_n.jpg?_nc_cat=1&_nc_sid=7206a8&_nc_ohc=qngmj5BlFmoAX8eSJ-3&_nc_ht=scontent.fsin2-1.fna&oh=5304a6985a759c808b37d071db436e6d&oe=5F6D6ED4'
+                return 'https://scontent.fsin2-1.fna.fbcdn.net/v/t1.0-9/1468494_514243042015937_131406220_n.jpg?_nc_cat=101&_nc_sid=e007fa&_nc_ohc=VjatVvjfALgAX-wkB32&_nc_ht=scontent.fsin2-1.fna&oh=afcf9a3b94290d91df7383667118fc1b&oe=5F6E4F12'
             default:
                 break;
         }

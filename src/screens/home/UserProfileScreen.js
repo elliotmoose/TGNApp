@@ -32,26 +32,30 @@ class UserProfileScreen extends Component {
     }
 
     renderUserDetails(user) {
-        let name = user && user.name || 'no_name';
+        let fullName = user && user.fullName || 'no_name';
         let username = user && user.username || 'no_username';
+        
+        // console.log(user.followers)
+        let me = UserController.getLoggedInUser();
+        let isMyself = user._id == me._id;
+        let isFollowing = user && user.followers && user.followers.findIndex((follower)=>follower._id == me._id) != -1 || false;
+        // let isFollowing = false;
         let profilePicture = ImageLoader.LoadProfilePicture(username);
-        let bio = user && user.bio || `Lorem Ipsum is simply dummy text of the printing and typesetting industry.
-        Lorem Ipsum has been the industry standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.
-        It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged.`;
+        let bio = user && user.bio || `no_bio`;
 
         let followerCount = user.followerCount || 0;
         let followingCount = user.followingCount || 0;
         
         return <View style={{width: '100%', padding: 16, backgroundColor: 'white', marginBottom: 20}}>
             <View style={{height: 55, flexDirection: 'row'}}>
-                <Image style={{backgroundColor: Colors.darkGray, borderRadius: 300, height: '100%', aspectRatio: 1}} source={{uri: profilePicture}} resizeMode='contain'/>
+                <Image style={{backgroundColor: Colors.darkGray, borderRadius: 300, height: '100%', aspectRatio: 1}} source={{uri: profilePicture}}/>
                 <View style={{flex: 1, justifyContent: 'space-between', marginLeft: 12, marginVertical: 2}}>
-                    <Text style={{fontWeight: '700', fontSize: 24}}>{name}</Text>
+                    <Text style={{fontWeight: '700', fontSize: 24}}>{fullName}</Text>
                     <Text style={{fontWeight: '500', fontSize: 16}}>@{username}</Text>
                 </View>
-                <TouchableOpacity style={{alignSelf: 'flex-start', height: 30, width: 140, borderRadius: 4, backgroundColor: Colors.blue, justifyContent: 'center', alignItems: 'center'}}>
-                    <Text style={{color: 'white', fontWeight: '500'}}>Follow</Text>
-                </TouchableOpacity>
+                {isMyself || <TouchableOpacity style={{alignSelf: 'flex-start', height: 30, width: 140, borderRadius: 4, backgroundColor: isFollowing ? Colors.gray : Colors.blue, justifyContent: 'center', alignItems: 'center'}}>
+                    <Text style={{color: 'white', fontWeight: '500'}}>{isFollowing ? 'Following' : 'Follow'}</Text>
+                </TouchableOpacity>}
             </View>
             <Text style={{fontWeight: '500', marginVertical: 16}}>{bio}</Text>
             <TouchableOpacity style={{alignSelf: 'flex-end'}}>

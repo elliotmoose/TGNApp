@@ -18,6 +18,14 @@ export const UserController = {
             console.error(error);            
         }
     },
+    getLoggedInUser() {
+        try {
+            return store.getState().user;
+        } catch (error) {            
+            console.log('TODO: HANDLE ERROR:');
+            console.error(error);            
+        }
+    },
     async loadUser(userId) {
         try {
             assertRequiredParams({userId});
@@ -27,5 +35,5 @@ export const UserController = {
             console.log('TODO: HANDLE ERROR:');
             console.error(error);            
         }
-    }
+    },
 }
