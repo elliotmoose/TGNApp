@@ -9,7 +9,6 @@ const initialState = {
 const PostsReducer = (state = initialState, action) => {
     switch (action.type) {
         case SET_FEED: {
-
             let posts = action.posts || [];
             let feedMap = {}; //reset feed map
             posts.forEach(post => {

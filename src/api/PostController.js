@@ -2,6 +2,7 @@ import Network from '../helpers/Network';
 import store from '../store';
 import { SetFeed, AppendFeed, UpdateFeedPostById } from '../store/actions/PostsActions';
 import PostsReducer from '../store/reducers/PostsReducer';
+import { assertRequiredParams } from '../helpers/Params';
 
 const FEED_POST_PAGE_SIZE = 8;
 
@@ -49,6 +50,29 @@ export const PostController = {
             }
 
             let lastPostDate = posts[posts.length-1].datePosted;
+            let beforeQuery = lastPostDate ? `&before=${lastPostDate}` : '';
+            let response = await Network.JsonRequest('GET',`/feed?limit=${FEED_POST_PAGE_SIZE}` + beforeQuery);
+
+            store.dispatch(AppendFeed(response));
+
+            return response || [];
+        } catch (error) {
+            console.log('TODO: HANDLE ERROR:');
+            console.log(error);
+        }        
+    },
+    async LoadUserPosts(userId) {
+        try {
+            assertRequiredParams({userId});
+            let response = await Network.JsonRequest('GET',`/users/${userId}/posts?limit=${FEED_POST_PAGE_SIZE}`);
+            return response;
+        } catch (error) {
+            console.log('TODO: HANDLE ERROR:');
+            console.log(error);
+        }        
+    },
+    async LoadUserPostsNext(lastPostDate) {
+        try {
             let beforeQuery = lastPostDate ? `&before=${lastPostDate}` : '';
             let response = await Network.JsonRequest('GET',`/feed?limit=${FEED_POST_PAGE_SIZE}` + beforeQuery);
 

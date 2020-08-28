@@ -42,7 +42,7 @@ export default function PostBody(props) {
         </View>
     }
     
-    let renderPostHeader = function (post) {        
+    let renderPostHeader = function (post) {       
         let username = (post.user && post.user.username) || 'unknown_user' ;
         let profilePicture = post.user && ImageLoader.LoadProfilePicture(post.user.username);
         // let profilePicture = (post.user && post.user.profilePicture) || null;
@@ -110,10 +110,7 @@ export default function PostBody(props) {
         </View>
     }    
     
-    let propPost = props.post || {};
-    let postId = propPost._id;
-    let post = useSelector(state => state.posts.feedMap[postId]);
-
+    let post = props.post || {};
 
     return (
         <View style={{backgroundColor: 'white'}}>

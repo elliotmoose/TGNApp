@@ -20,7 +20,6 @@ export default function PostDetailScreen(props) {
 
 
 	useEffect(() => {
-		console.log(isLoading);
 		if (isLoading) {
 
 			const loadComments = async () => {				

@@ -19,6 +19,10 @@ export default function FeedPost(props) {
     }
 
     let renderPostComments = function (post) {
+        if(!post) {
+            return <View/>
+        }
+        
         let { comments, commentCount } = post;
 
         if (!comments || (comments && comments.length == 0) || commentCount == 0) {
