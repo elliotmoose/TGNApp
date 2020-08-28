@@ -17,31 +17,35 @@ export default function PostDetailScreen(props) {
 	let [comments, setComments] = useState([]);
 	let [isLoading, setIsLoading] = useState(false);
 
-	//componentDidMount => Get comments
-	useEffect(()=>{
-		setIsLoading(true);
-	});
+
 
 	useEffect(() => {
+		console.log(isLoading);
 		if (isLoading) {
-			const loadComments = async () => {
+
+			const loadComments = async () => {				
 				let comments = await PostController.LoadComments(postId) || [];
-				setComments(comments);
+				setComments(comments);				
 				setIsLoading(false);
 			}
 	
 			loadComments();
 		}
 	}, [isLoading])
+
+	//componentDidMount => Get comments
+	useEffect(()=>{
+		setIsLoading(true);
+	}, []);
 	
 	let postItem = {_id: postId}	
-
 	return <View style={{ flex: 1, backgroundColor: Colors.offWhite, alignItems: 'center', justifyContent: 'center'}}>		
 		{
 		isLoading ? 
 		<ActivityIndicator/>
 		:
 		<FlatList 
+			style={{width: '100%'}}
 			data={[postItem, ...comments]}
 			renderItem={({item}) => {
 				if(item === postItem) {

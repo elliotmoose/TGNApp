@@ -8,6 +8,7 @@ import PostHelper from '../../helpers/Post';
 import ImageLoader from '../../api/ImageLoader';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { RelativeDate } from '../../helpers/DateHelper';
+import { useSelector } from 'react-redux';
 
 export default function PostBody(props) {    
 
@@ -74,7 +75,7 @@ export default function PostBody(props) {
         </View>
     }
     
-    let renderPostReaction = function (post) {                        
+    let renderPostReaction = function (post) {                  
         let myReactions = post.myReactions || [];
         let reactionCount = post.reactionCount || 0;
         let reactionCountSuffix = reactionCount == 1 ? '' : 's';
@@ -109,7 +110,10 @@ export default function PostBody(props) {
         </View>
     }    
     
-    let post = props.post;
+    let propPost = props.post || {};
+    let postId = propPost._id;
+    let post = useSelector(state => state.posts.feedMap[postId]);
+
 
     return (
         <View style={{backgroundColor: 'white'}}>
