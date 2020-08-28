@@ -1,5 +1,5 @@
 import React, { Component, useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, Image, TextInput } from 'react-native';
+import { View, Text, TouchableOpacity, Image, TextInput, ActivityIndicator } from 'react-native';
 import Colors from '../../constants/Colors';
 import { PostController } from '../../api/PostController';
 import PostBody from '../../components/home/PostBody';
@@ -36,7 +36,11 @@ export default function PostDetailScreen(props) {
 	
 	let postItem = {_id: postId}	
 
-	return <View style={{ flex: 1, backgroundColor: Colors.offWhite}}>		
+	return <View style={{ flex: 1, backgroundColor: Colors.offWhite, alignItems: 'center', justifyContent: 'center'}}>		
+		{
+		isLoading ? 
+		<ActivityIndicator/>
+		:
 		<FlatList 
 			data={[postItem, ...comments]}
 			renderItem={({item}) => {
@@ -53,6 +57,6 @@ export default function PostDetailScreen(props) {
 				}
 			}}
 			keyExtractor={(item)=>item._id}
-		/>	
+		/>	}
 	</View>
 }

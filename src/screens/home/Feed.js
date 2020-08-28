@@ -8,6 +8,7 @@ import { Hitslop } from '../../constants/Sizing';
 import { PostController } from '../../api/PostController';
 import store from '../../store';
 import { connect } from 'react-redux';
+import { UserController } from '../../api/UserController';
 
 // let post = {
 //     user: {
@@ -42,8 +43,9 @@ class Feed extends Component {
         finishedFeed: false
     }
 
-    componentDidMount() {
-        this.loadFeed();
+    async componentDidMount() {
+        await UserController.login('mooselliot', '12345');
+        await this.loadFeed();
     }
 
     async loadMore() {

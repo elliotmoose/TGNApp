@@ -1,12 +1,16 @@
 import Config from '../constants/Config';
+import store from '../store';
 
 const domain = Config.local ? (Config.isIos ? "http://localhost:8080" : "http://10.0.3.2/") : "https://mooselliot.com/"
 
 
 let Network = {
-    token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI1ZjJkNzc3NjI3MzY1YmM1MTY3ZGNkODIiLCJpYXQiOjE1OTY4MTUyMzR9.H5Olylo2PdzhNMS-CcSH5onBMYvMJf78bMwA22-oO3A',
+    // _token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI1ZjJkNzc3NjI3MzY1YmM1MTY3ZGNkODIiLCJpYXQiOjE1OTY4MTUyMzR9.H5Olylo2PdzhNMS-CcSH5onBMYvMJf78bMwA22-oO3A',
+    getToken() {
+        return store.getState().user.token;
+    },
     // token: null,
-    async JsonRequest(method, route, body) {
+    async JsonRequest(method, route, body, auth=true) {
         let url = domain + route;
         //log in to server
         var data = {
@@ -19,9 +23,16 @@ let Network = {
             }
         }
 
-        if(this.token)
-        {
-            data.headers['Authorization'] = `Bearer ${this.token}`;
+        if(auth) {
+            let token = this.getToken();
+            if(token)
+            {
+                data.headers['Authorization'] = `Bearer ${token}`;
+            }
+            else {
+                alert('not logged in');
+                return;
+            }            
         }
 
         if (body) {

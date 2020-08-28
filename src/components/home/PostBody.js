@@ -16,6 +16,10 @@ export default function PostBody(props) {
     let viewPostDetail = function() {
         navigation.navigate('PostDetailScreen', {post: props.post});
     }
+    
+    let viewUserProfile = function() {
+        navigation.navigate('UserProfileScreen', {userId: props.post.user._id});
+    }
 
     let reactToPost = async function(reactionType) {
         let post = props.post;
@@ -46,9 +50,13 @@ export default function PostBody(props) {
         let postTime = RelativeDate(post.datePosted);
 
         return <View style={{flexDirection: 'row', height: 50}}>
-            <Image style={{backgroundColor: Colors.darkGray, height: '100%', aspectRatio: 1, borderRadius: 100}} source={{uri: profilePicture}}/>
+            <TouchableOpacity style={{height: '100%', aspectRatio: 1, borderRadius: 100, overflow: 'hidden'}} onPress={viewUserProfile}>
+                <Image style={{backgroundColor: Colors.darkGray, flex: 1}} source={{uri: profilePicture}}/>
+            </TouchableOpacity >
             <View style={{flexDirection: 'column', height: '100%', justifyContent: 'space-between', marginLeft: 9, padding: 4, flex: 1}}>
-                <Text style={{fontSize: 18, fontWeight: 'bold'}}>{username}</Text>
+                <TouchableOpacity onPress={viewUserProfile}>
+                    <Text style={{fontSize: 18, fontWeight: 'bold'}}>{username}</Text>
+                </TouchableOpacity>
                 <View style={{width: '100%'}}>
                     {renderPostType(postType)}
                 </View>
