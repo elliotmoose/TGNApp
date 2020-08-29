@@ -36,4 +36,14 @@ export const UserController = {
             console.error(error);            
         }
     },
+    async loadUserMemberOf(userId) {
+        try {
+            assertRequiredParams({userId});
+            let response = await Network.JsonRequest('GET', `/users/${userId}/memberOf`);
+            return response;
+        } catch (error) {
+            console.log('TODO: HANDLE ERROR:');
+            console.error(error);            
+        }
+    }
 }

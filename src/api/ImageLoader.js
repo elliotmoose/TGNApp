@@ -17,6 +17,9 @@ const ImageLoader = {
                 break;
         }
     },
+    LoadOrgPicture(handle) {
+        return 'https://scontent.fsin2-1.fna.fbcdn.net/v/t1.0-9/78312326_10216417014319061_3502839120319741952_n.jpg?_nc_cat=106&_nc_sid=85a577&_nc_ohc=c72lPyKg8PMAX8ZzqKW&_nc_ht=scontent.fsin2-1.fna&oh=1b1d724cc74f0f90ff4b6f997bff288e&oe=5F702199';
+    }
 }
 
 export default ImageLoader

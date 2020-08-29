@@ -1,31 +1,51 @@
 import React, { Component } from 'react';
-import { View, Text, TouchableOpacity, Image, TextInput } from 'react-native';
+import { View, Text, TouchableOpacity, Image, TextInput, Keyboard } from 'react-native';
 import ModalHeader from './ModalHeader';
 import Colors from '../constants/Colors';
 import { Screen } from '../constants/Sizing';
 import Images from '../helpers/Images';
 import { PostController } from '../api/PostController';
+import { UserController } from '../api/UserController';
+import TargetSelectionList from './TargetSelectionList';
+import ImageLoader from '../api/ImageLoader';
 
-class CreateModal extends Component {
+class CreatePostModal extends Component {
 
 	state = {
-		// target: {
-		// 	_id: '12345689',
-		// 	name: 'Bethel AOG',
-		// 	handle: 'bethelaog',
-		// },
 		postType: 'testimony',
-		postContent: ''
+		postContent: '',
+		targets: []
 	}
 	
+	componentDidMount() {
+		this.loadTargets();
+	}
+	
+	async loadTargets() {
+		let me = UserController.getLoggedInUser();
+		let targets = await UserController.loadUserMemberOf(me._id) || [];
+		this.setState({targets});
+	}
+
+	requestingSelectTargets() {
+		Keyboard.dismiss();
+		this.targetSelectionList && this.targetSelectionList.fade(true);
+	}
+	onSelectTarget(target) {
+		this.setState({target});
+	}
+
 	renderTargetSelection() {
 		const targetSelectionHeight = 70;
 		const padding = 12;
-		let targetName = (this.state.target && this.state.target.name) || 'Everyone';
-		return <TouchableOpacity style={{height: targetSelectionHeight, padding}}>
+		let target = this.state.target;
+		let targetName = (target && target.name) || 'Everyone';
+		let handle = target && target.handle || '';
+		let orgPicture = {uri: ImageLoader.LoadOrgPicture(handle)};
+		return <TouchableOpacity style={{height: targetSelectionHeight, padding}} onPress={this.requestingSelectTargets.bind(this)}>
 			<View style={{flex: 1, flexDirection: 'row', alignItems: 'center'}}>
 				<Image source={Images.chevron} resizeMode='contain' style={{tintColor: Colors.primary, transform: [{rotate: '-90deg'}], width: 40, aspectRatio: 1}}/>
-				<Image source={null} resizeMode='cover' style={{borderRadius: targetSelectionHeight/2, height: '100%', aspectRatio: 1, backgroundColor: Colors.darkGray, marginRight: 12}}/>
+				<Image source={orgPicture} resizeMode='cover' style={{borderRadius: targetSelectionHeight/2, height: '100%', aspectRatio: 1, backgroundColor: Colors.darkGray, marginRight: 12}}/>
 				<Text style={{fontWeight: '700'}}>{targetName}</Text>
 			</View>
 		</TouchableOpacity>
@@ -118,7 +138,7 @@ class CreateModal extends Component {
 	}
 
 	render() {
-		return <View style={{flex: 1, backgroundColor: 'white'}}>
+		return <View style={{flex: 1, backgroundColor: 'white'}}>	
 			<ModalHeader leftAction={{
 				title: 'Back',
 				action: () => this.props.navigation.goBack()
@@ -137,9 +157,14 @@ class CreateModal extends Component {
 				}}>
 			</ModalHeader>
 			{this.renderTargetSelection()}			
-			{this.renderPostContent()}			
+			{this.renderPostContent()}		
+			<TargetSelectionList 
+				targets={this.state.targets} 
+				onSelectTarget={this.onSelectTarget.bind(this)}
+				ref={(ref)=>this.targetSelectionList = ref}
+				/>
 		</View>
 	}
 }
 
-export default CreateModal;
+export default CreatePostModal;
