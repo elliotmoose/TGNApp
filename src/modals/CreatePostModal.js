@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
-import { View, Text, TouchableOpacity, Image, TextInput, Keyboard } from 'react-native';
+import { View, Text, TouchableOpacity, Image, TextInput, Keyboard, FlatList } from 'react-native';
 import ModalHeader from './ModalHeader';
 import Colors from '../constants/Colors';
 import { Screen } from '../constants/Sizing';
 import Images from '../helpers/Images';
 import { PostController } from '../api/PostController';
 import { UserController } from '../api/UserController';
-import TargetSelectionList from './TargetSelectionList';
+import AnimatedBottomDrawer from '../components/create/AnimatedBottomDrawer';
 import ImageLoader from '../api/ImageLoader';
 
 class CreatePostModal extends Component {
@@ -20,7 +20,12 @@ class CreatePostModal extends Component {
 	componentDidMount() {
 		this.loadTargets();
 	}
-	
+
+	requestSelectPostType() {
+		Keyboard.dismiss();
+		this.postTypeSelection && this.postTypeSelection.fade(true);
+	}
+
 	async loadTargets() {
 		let me = UserController.getLoggedInUser();
 		let targets = await UserController.loadUserMemberOf(me._id) || [];
@@ -31,11 +36,13 @@ class CreatePostModal extends Component {
 		Keyboard.dismiss();
 		this.targetSelectionList && this.targetSelectionList.fade(true);
 	}
-	onSelectTarget(target) {
+	
+	selectTarget(target) {
+		this.targetSelectionList.fade(false);
 		this.setState({target});
 	}
 
-	renderTargetSelection() {
+	renderSelectedTarget() {
 		const targetSelectionHeight = 70;
 		const padding = 12;
 		let target = this.state.target;
@@ -47,6 +54,23 @@ class CreatePostModal extends Component {
 				<Image source={Images.chevron} resizeMode='contain' style={{tintColor: Colors.primary, transform: [{rotate: '-90deg'}], width: 40, aspectRatio: 1}}/>
 				<Image source={orgPicture} resizeMode='cover' style={{borderRadius: targetSelectionHeight/2, height: '100%', aspectRatio: 1, backgroundColor: Colors.darkGray, marginRight: 12}}/>
 				<Text style={{fontWeight: '700'}}>{targetName}</Text>
+			</View>
+		</TouchableOpacity>
+	}
+
+	renderTarget(target) {
+		let name = target && target.name || 'Everyone';
+		let handle = target && target.handle || '';
+		let orgPicture = {uri: ImageLoader.LoadOrgPicture(handle)};
+		let isTargeted = (target !== null && target !== undefined);
+
+		return <TouchableOpacity style={{ height: 56, paddingHorizontal: 24, marginBottom: 24 }} onPress={()=>this.selectTarget(target)}> 
+			<View style={{ width: '100%', height: '100%', flexDirection: 'row'}}>
+				<Image source={orgPicture} style={{borderRadius: 300, aspectRatio: 1, height: '100%', backgroundColor: Colors.darkGray}}/>
+				<View style={{ flex: 1, justifyContent: 'space-around', marginLeft: 14}}>
+					<Text style={{fontWeight: '700', fontSize: 21}}>{name}</Text>
+					{isTargeted && <Text style={{fontWeight: '700', fontSize: 16}}>@{handle}</Text>}
+				</View>
 			</View>
 		</TouchableOpacity>
 	}
@@ -126,6 +150,7 @@ class CreatePostModal extends Component {
 			return <Text key={index} style={{fontWeight: isMention ? 'bold' : 'normal', color: isMention ? Colors.blue : 'black'}}>{textObject.text}</Text>
 		});
 	}
+
 	renderPostContent() {
 		return <TextInput multiline value={''} style={{backgroundColor: Colors.lightgray, borderRadius: 12, margin: 12, height: Screen.height/4, paddingTop: 14, paddingLeft: 14}} 
 			onChangeText={(text)=>this.setState({postContent: text})} spellCheck={false}>
@@ -138,6 +163,9 @@ class CreatePostModal extends Component {
 	}
 
 	render() {
+
+		let targets = [null, ...this.state.targets];
+
 		return <View style={{flex: 1, backgroundColor: 'white'}}>	
 			<ModalHeader leftAction={{
 				title: 'Back',
@@ -153,16 +181,24 @@ class CreatePostModal extends Component {
 				}}
 				middleAction={{
 					title: 'New Testimony',
-					action: () => { }
+					action: () => this.requestSelectPostType()
 				}}>
 			</ModalHeader>
-			{this.renderTargetSelection()}			
+			{this.renderSelectedTarget()}			
 			{this.renderPostContent()}		
-			<TargetSelectionList 
-				targets={this.state.targets} 
-				onSelectTarget={this.onSelectTarget.bind(this)}
-				ref={(ref)=>this.targetSelectionList = ref}
-				/>
+			<AnimatedBottomDrawer ref={(ref)=>this.targetSelectionList = ref}>
+				<View style={{height: 60, alignItems: 'center', justifyContent: 'center'}}>
+						<Text style={{fontWeight: '600', fontSize: 16}}>select a group to post to</Text>						
+					</View>
+					<FlatList
+						data={targets}
+						renderItem={({ item: target }) => this.renderTarget(target)}
+						keyExtractor={(item) => item && item._id || 'Everyone'}
+					/>
+			</AnimatedBottomDrawer>
+			<AnimatedBottomDrawer ref={(ref)=>this.postTypeSelection = ref}>
+				<View style={{flex: 1, backgroundColor: 'red'}}/>
+			</AnimatedBottomDrawer>
 		</View>
 	}
 }
