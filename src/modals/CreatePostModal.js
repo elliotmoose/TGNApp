@@ -12,8 +12,9 @@ import ImageLoader from '../api/ImageLoader';
 class CreatePostModal extends Component {
 
 	state = {
-		postType: 'testimony',
+		postType: 'Testimony',
 		postContent: '',
+		availablePostTypes: ['Testimony', 'Pray for me', 'Announcement'],
 		targets: []
 	}
 	
@@ -24,6 +25,19 @@ class CreatePostModal extends Component {
 	requestSelectPostType() {
 		Keyboard.dismiss();
 		this.postTypeSelection && this.postTypeSelection.fade(true);
+	}
+
+	selectPostType(postType) {
+		this.postTypeSelection.fade(false);
+		this.setState({postType});
+	}
+
+	renderPostType(postType) {
+		return <TouchableOpacity style={{ height: 56, paddingHorizontal: 24, marginBottom: 24 }} onPress={()=>this.selectPostType(postType)}> 
+			<View style={{ width: '100%', height: '100%', alignItems: 'center', justifyContent: 'center'}}>
+					<Text style={{fontWeight: '700', fontSize: 21}}>{postType}</Text>
+			</View>
+		</TouchableOpacity>
 	}
 
 	async loadTargets() {
@@ -165,6 +179,7 @@ class CreatePostModal extends Component {
 	render() {
 
 		let targets = [null, ...this.state.targets];
+		let postTypes = this.state.availablePostTypes;
 
 		return <View style={{flex: 1, backgroundColor: 'white'}}>	
 			<ModalHeader leftAction={{
@@ -180,24 +195,31 @@ class CreatePostModal extends Component {
 					}
 				}}
 				middleAction={{
-					title: 'New Testimony',
+					title: this.state.postType,
 					action: () => this.requestSelectPostType()
 				}}>
 			</ModalHeader>
 			{this.renderSelectedTarget()}			
 			{this.renderPostContent()}		
-			<AnimatedBottomDrawer ref={(ref)=>this.targetSelectionList = ref}>
-				<View style={{height: 60, alignItems: 'center', justifyContent: 'center'}}>
-						<Text style={{fontWeight: '600', fontSize: 16}}>select a group to post to</Text>						
-					</View>
-					<FlatList
-						data={targets}
-						renderItem={({ item: target }) => this.renderTarget(target)}
-						keyExtractor={(item) => item && item._id || 'Everyone'}
-					/>
+			<AnimatedBottomDrawer ref={(ref) => this.targetSelectionList = ref}>
+				<View style={{ height: 60, alignItems: 'center', justifyContent: 'center' }}>
+					<Text style={{ fontWeight: '600', fontSize: 16 }}>select a group to post to</Text>
+				</View>
+				<FlatList
+					data={targets}
+					renderItem={({ item: target }) => this.renderTarget(target)}
+					keyExtractor={(item) => item && item._id || 'Everyone'}
+				/>
 			</AnimatedBottomDrawer>
 			<AnimatedBottomDrawer ref={(ref)=>this.postTypeSelection = ref}>
-				<View style={{flex: 1, backgroundColor: 'red'}}/>
+				<View style={{ height: 60, alignItems: 'center', justifyContent: 'center' }}>
+					<Text style={{ fontWeight: '600', fontSize: 16 }}>select a post type</Text>
+				</View>
+				<FlatList
+					data={postTypes}
+					renderItem={({ item }) => this.renderPostType(item)}
+					keyExtractor={(item) => item}
+				/>
 			</AnimatedBottomDrawer>
 		</View>
 	}
