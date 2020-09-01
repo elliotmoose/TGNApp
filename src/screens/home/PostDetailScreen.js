@@ -5,15 +5,17 @@ import { PostController } from '../../api/PostController';
 import PostBody from '../../components/home/PostBody';
 import { FlatList } from 'react-native-gesture-handler';
 import FullComment from '../../components/home/FullComment';
+import { useSelector } from 'react-redux';
 
 export default function PostDetailScreen(props) {
-	let post = props.route.params.post;
+	let propsPost = props.route.params.post;	
+	let postId = propsPost._id;
+	let post = useSelector(state => state.posts.feedMap[postId]);
 	
 	if(!post) {
 		return <View/>;
 	}
 
-	let postId = post._id;
 	let [comments, setComments] = useState([]);
 	let [isLoading, setIsLoading] = useState(false);
 

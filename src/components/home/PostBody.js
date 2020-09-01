@@ -37,7 +37,8 @@ export default function PostBody(props) {
 
     let renderPostType = function (tagName) {
         let postType = tagName[0].toUpperCase() + tagName.substr(1).toLowerCase();
-        return <View style={{backgroundColor: Colors.blue, borderRadius: 100, justifyContent: 'center', alignItems: 'center', padding: 2, paddingHorizontal: 10, alignSelf: 'flex-start'}}>
+        let postColor = (tagName == 'testimony') ? Colors.blue : (tagName == 'pray for me') ? Colors.orange : Colors.yellow; 
+        return <View style={{backgroundColor: postColor, borderRadius: 100, justifyContent: 'center', alignItems: 'center', padding: 2, paddingHorizontal: 10, alignSelf: 'flex-start'}}>
             <Text style={{color: 'white', fontSize: 11, fontWeight: 'bold'}}>{postType}</Text>
         </View>
     }
@@ -54,7 +55,7 @@ export default function PostBody(props) {
             <TouchableOpacity style={{height: '100%', aspectRatio: 1, borderRadius: 100, overflow: 'hidden'}} onPress={viewUserProfile}>
                 <Image style={{backgroundColor: Colors.darkGray, flex: 1}} source={{uri: profilePicture}}/>
             </TouchableOpacity >
-            <View style={{flexDirection: 'column', height: '100%', justifyContent: 'space-between', marginLeft: 9, padding: 4, flex: 1}}>
+            <View style={{flexDirection: 'column', height: '100%', justifyContent: 'space-between', marginLeft: 12, padding: 2, flex: 1}}>
                 <TouchableOpacity onPress={viewUserProfile}>
                     <Text style={{fontSize: 18, fontWeight: 'bold'}}>{username}</Text>
                 </TouchableOpacity>

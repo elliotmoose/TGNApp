@@ -8,6 +8,8 @@ const Colors = {
     fontGray: '#6C6C6C',
     bgGray: '#E0E0E0',
     gray : '#BEBEBE',
+    yellow : '#F2C94C',
+    orange : '#F2924C',
     // songRow: '#189663',
     songRow: '#41A57C',
     // songRow: '#4182A5',
