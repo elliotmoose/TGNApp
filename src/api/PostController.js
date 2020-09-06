@@ -1,6 +1,6 @@
 import Network from '../helpers/Network';
 import store from '../store';
-import { SetFeed, AppendFeed, UpdateFeedPostById } from '../store/actions/PostsActions';
+import { SetFeed, AppendFeed, UpdateFeedPostById, UpdatePostCache } from '../store/actions/PostsActions';
 import PostsReducer from '../store/reducers/PostsReducer';
 import { assertRequiredParams } from '../helpers/Params';
 
@@ -8,11 +8,12 @@ const FEED_POST_PAGE_SIZE = 8;
 
 export const PostController = {    
     GetFeedPosts() {
-        let posts = store.getState().posts.feed || [];
-        return posts;
+        let postIds = store.getState().posts.feed || [];
+        let posts = postIds.map((postId)=>this.GetPostById(postId));
+        return posts || [];
     },
     GetPostById(postId) {
-        return store.getState().posts.feedMap[postId];
+        return store.getState().posts.cache[postId];
     },
     UpdatePostById(postId, newPostData) {
         store.dispatch(UpdateFeedPostById(postId, newPostData));
@@ -34,8 +35,11 @@ export const PostController = {
     async LoadFeed() {
         try {
             let response = await Network.JsonRequest('GET',`/feed?limit=${FEED_POST_PAGE_SIZE}`);
-            store.dispatch(SetFeed(response));
-            return response;
+            //1. cache all these posts
+            store.dispatch(UpdatePostCache(response));
+            //2. clear feed state and set post ids
+            store.dispatch(SetFeed(response.map(post=>post._id)));
+            return response || [];
         } catch (error) {
             console.log('TODO: HANDLE ERROR:');
             console.log(error);
@@ -44,16 +48,24 @@ export const PostController = {
     async LoadFeedNext() {
         try {
             let posts = this.GetFeedPosts();
-            if(!posts) {
+            if(!posts || posts.length == 0) {
                 let response = await this.LoadFeed();
-                return response;
+                return response || [];
             }
 
-            let lastPostDate = posts[posts.length-1].datePosted;
+            let lastPost = posts[posts.length-1] || {};
+            let lastPostDate = lastPost.datePosted;
+
+            if(!lastPostDate) {
+                let response = await this.LoadFeed();
+                return response || [];
+            }
+            
             let beforeQuery = lastPostDate ? `&before=${lastPostDate}` : '';
             let response = await Network.JsonRequest('GET',`/feed?limit=${FEED_POST_PAGE_SIZE}` + beforeQuery);
 
-            store.dispatch(AppendFeed(response));
+            store.dispatch(UpdatePostCache(response));
+            store.dispatch(AppendFeed(response.map(post=>post._id)));
 
             return response || [];
         } catch (error) {
@@ -65,6 +77,7 @@ export const PostController = {
         try {
             assertRequiredParams({userId});
             let response = await Network.JsonRequest('GET',`/users/${userId}/posts?limit=${FEED_POST_PAGE_SIZE}`);
+            store.dispatch(UpdatePostCache(response));
             return response;
         } catch (error) {
             console.log('TODO: HANDLE ERROR:');
@@ -75,8 +88,7 @@ export const PostController = {
         try {
             let beforeQuery = lastPostDate ? `&before=${lastPostDate}` : '';
             let response = await Network.JsonRequest('GET',`/feed?limit=${FEED_POST_PAGE_SIZE}` + beforeQuery);
-
-            store.dispatch(AppendFeed(response));
+            store.dispatch(UpdatePostCache(response));
 
             return response || [];
         } catch (error) {

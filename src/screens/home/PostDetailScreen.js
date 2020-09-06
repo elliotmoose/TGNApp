@@ -10,7 +10,7 @@ import { useSelector } from 'react-redux';
 export default function PostDetailScreen(props) {
 	let propsPost = props.route.params.post;	
 	let postId = propsPost._id;
-	let post = useSelector(state => state.posts.feedMap[postId]);
+	let post = useSelector(state => state.posts.cache[postId]);
 	
 	if(!post) {
 		return <View/>;

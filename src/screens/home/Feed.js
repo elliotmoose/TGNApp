@@ -114,7 +114,7 @@ class Feed extends Component {
 
 const mapStateToProps = (state) => {
     return {
-        feed: state.posts.feed
+        feed: state.posts.feed.map(postId=>state.posts.cache[postId])
     }
 }
 

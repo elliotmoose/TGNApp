@@ -53,7 +53,7 @@ export default function FeedPost(props) {
     let postId = propPost._id;
     // console.log(`rerender for post: ${postId}`);
     
-    let post = useSelector(state => state.posts.feedMap[postId]);
+    let post = useSelector(state => state.posts.cache[postId]);
 
     return (
         <View style={{ backgroundColor: 'white', marginBottom: 20, padding: 16 }} {...props.style}>

@@ -111,7 +111,9 @@ export default function PostBody(props) {
         </View>
     }    
     
-    let post = props.post || {};
+    let propsPost = props.post || {};
+    let postId = propsPost._id;
+    let post = useSelector(state => state.posts.cache[postId]) || {};
 
     return (
         <View style={{backgroundColor: 'white'}}>
