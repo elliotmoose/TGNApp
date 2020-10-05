@@ -1,7 +1,7 @@
 import Config from '../constants/Config';
 import store from '../store';
 
-const domain = Config.local ? (Config.isIos ? "http://localhost:8080" : "http://10.0.3.2/") : "https://mooselliot.com/"
+const domain = Config.local ? (Config.isIos ? "http://localhost:8080" : "http://10.0.3.2/") : "http://mooselliot.com:8081"
 
 
 let Network = {

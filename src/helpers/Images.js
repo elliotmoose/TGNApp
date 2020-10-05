@@ -10,6 +10,9 @@ var Images = {
     reactionPray: require('../../assets/images/reactionPray.png'),
     reactionPraise: require('../../assets/images/reactionPraise.png'),
     chevron: require('../../assets/images/chevron.png'),
+    lock: require('../../assets/images/lock.png'),
+    logo: require('../../assets/images/logo.png'),
+    cross: require('../../assets/images/cross.png'),
 }
 
 export default Images

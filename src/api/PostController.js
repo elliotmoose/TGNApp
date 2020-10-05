@@ -28,7 +28,7 @@ export const PostController = {
             let response = await Network.JsonRequest('POST', '/posts', body);
             return response;
         } catch (error) {
-            console.log('TODO: HANDLE ERROR:');
+            console.log('TODO: HANDLE ERROR:MakePost');
             console.error(error);            
         }
     },
@@ -37,11 +37,11 @@ export const PostController = {
             let response = await Network.JsonRequest('GET',`/feed?limit=${FEED_POST_PAGE_SIZE}`);
             //1. cache all these posts
             store.dispatch(UpdatePostCache(response));
-            //2. clear feed state and set post ids
+            //2. clear feed state and set post ids            
             store.dispatch(SetFeed(response.map(post=>post._id)));
             return response || [];
         } catch (error) {
-            console.log('TODO: HANDLE ERROR:');
+            console.log('TODO: HANDLE ERROR:LoadFeed');
             console.log(error);
         }        
     },
@@ -60,7 +60,7 @@ export const PostController = {
                 let response = await this.LoadFeed();
                 return response || [];
             }
-            
+        
             let beforeQuery = lastPostDate ? `&before=${lastPostDate}` : '';
             let response = await Network.JsonRequest('GET',`/feed?limit=${FEED_POST_PAGE_SIZE}` + beforeQuery);
 
@@ -69,7 +69,7 @@ export const PostController = {
 
             return response || [];
         } catch (error) {
-            console.log('TODO: HANDLE ERROR:');
+            console.log('TODO: HANDLE ERROR:LoadFeedNext');
             console.log(error);
         }        
     },
@@ -80,7 +80,9 @@ export const PostController = {
             store.dispatch(UpdatePostCache(response));
             return response;
         } catch (error) {
-            console.log('TODO: HANDLE ERROR:');
+            return {error};
+
+            console.log('TODO: HANDLE ERROR:LoadUserPosts');
             console.log(error);
         }        
     },
@@ -92,7 +94,8 @@ export const PostController = {
 
             return response || [];
         } catch (error) {
-            console.log('TODO: HANDLE ERROR:');
+            
+            console.log('TODO: HANDLE ERROR:LoadUserPostsNext');
             console.log(error);
         }        
     },
@@ -120,7 +123,7 @@ export const PostController = {
             console.log(`Loaded ${comments.length} comments`);
             return comments;
         } catch (error) {
-            console.log('TODO: HANDLE ERROR:');
+            console.log('TODO: HANDLE ERROR:LoadComments');
             console.log(error);
         }
     },
@@ -137,7 +140,7 @@ export const PostController = {
 
             return response;
         } catch (error) {
-            console.log('TODO: HANDLE ERROR:');
+            console.log('TODO: HANDLE ERROR:CommentOnPost');
             console.log(error);
         }        
     },
@@ -147,11 +150,11 @@ export const PostController = {
             let post = this.GetPostById(postId);
 
             if(!post){
-                console.error('could not find post');
+                console.error('could not find postReactToPost');
             }
 
             if (!post.myReactions) {                    
-                console.error('malformed post');
+                console.error('malformed postReactToPost');
                 return;
             }
 
@@ -178,7 +181,7 @@ export const PostController = {
                 await Network.JsonRequest('POST', `/posts/${postId}/react`, {reactionType});
             }
         } catch (error) {
-            console.log('TODO: HANDLE ERROR:');
+            console.log('TODO: HANDLE ERROR:ReactToPost');
             console.log(error);
         }
     }

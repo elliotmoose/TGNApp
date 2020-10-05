@@ -43,9 +43,9 @@ class Feed extends Component {
         finishedFeed: false
     }
 
-    async componentDidMount() {
-        await UserController.login('mooselliot', '12345');
-        await this.loadFeed();
+    async componentDidMount() {        
+        await UserController.login('lywjoel', '12345');
+        await this.loadFeed()
     }
 
     async loadMore() {
@@ -60,7 +60,10 @@ class Feed extends Component {
     }
 
     async loadFeed() {
-        await PostController.LoadFeed();
+        this.setState({ isLoadingMore: true }, async () => {
+            await PostController.LoadFeed();
+            this.setState({ isLoadingMore: false })
+        });        
     }
 
     async refresh() {
@@ -77,7 +80,7 @@ class Feed extends Component {
     }
 
     render() {
-        // let posts = store.getState().posts.feed || [];
+        // let posts = store.getState().posts.feed || [];        
         let posts = this.props.feed || [];
 
         return <SafeAreaView style={{ flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: 'white' }}>
@@ -98,7 +101,7 @@ class Feed extends Component {
                             style={{ width: '100%' }}
                         />)
                     }
-                    keyExtractor={(post, index) => `${post._id}`}
+                    keyExtractor={(post, index) => `${post._id}${index}`}
                     style={{ backgroundColor: Colors.bgGray }}
                     onRefresh={this.refresh.bind(this)}
                     refreshing={this.state.isRefreshing}

@@ -10,9 +10,11 @@ import Explore from '../screens/Explore';
 import Notifications from '../screens/Notifications';
 import MyWall from '../screens/MyWall';
 import CreatePostModal from '../modals/CreatePostModal';
+import OnboardNavigator from './OnboardNavigator';
 
 const Tab = createBottomTabNavigator();
-const RootStack = createStackNavigator();
+const ModalStack = createStackNavigator();
+const OnboardStack = createStackNavigator();
 // Tab.navigationOptions = ({navigation}) => {
 //     tabBarOnPress: console.log('pressed tab');
 // }
@@ -59,15 +61,19 @@ function AppScreen() {
 </Tab.Navigator>
 }
 
+function OnboardStackNavigator() {
+    return <OnboardStack.Navigator>
+        <OnboardStack.Screen name='Onboarding' component={OnboardNavigator} options={{ headerShown: false }}/>
+        <OnboardStack.Screen name="AppScreen" component={AppScreen}  options={{ headerShown: false, animationEnabled: false }} />
+    </OnboardStack.Navigator>
+}
 export default class AppNavigator extends React.Component {
     render() {
-        return <NavigationContainer>
-            <RootStack.Navigator mode='modal'>                
-                <RootStack.Screen name="AppScreen" component={AppScreen}  options={{ headerShown: false }}/>
-                <RootStack.Screen name="CreateModal" component={CreatePostModal} options={{ headerShown: false }}/>                
-            </RootStack.Navigator>
-            {/* <Stack.Navigator>
-            </Stack.Navigator> */}
+        return <NavigationContainer>            
+            <ModalStack.Navigator mode='modal'>                
+                <ModalStack.Screen name="AppScreen" component={OnboardStackNavigator}  options={{ headerShown: false }}/>
+                <ModalStack.Screen name="CreateModal" component={CreatePostModal} options={{ headerShown: false }}/>                
+            </ModalStack.Navigator>
         </NavigationContainer>
     }
 }

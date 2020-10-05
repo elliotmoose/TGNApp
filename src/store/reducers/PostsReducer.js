@@ -9,7 +9,7 @@ const initialState = {
 const PostsReducer = (state = initialState, action) => {
     switch (action.type) {
         case SET_FEED: {
-            let posts = action.posts || [];
+            let posts = action.posts || [];            
             return { ...state, feed: posts};
         }
         case APPEND_FEED: {

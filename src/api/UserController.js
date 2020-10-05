@@ -14,15 +14,15 @@ export const UserController = {
             store.dispatch(SetLoggedInUser(user, token))
             return response;
         } catch (error) {
-            console.log('TODO: HANDLE ERROR:');
-            console.error(error);            
+            console.log('TODO: HANDLE ERROR:login');
+            throw error;
         }
     },
     getLoggedInUser() {
         try {
             return store.getState().user;
         } catch (error) {            
-            console.log('TODO: HANDLE ERROR:');
+            console.log('TODO: HANDLE ERROR:getLoggedInUser');
             console.error(error);            
         }
     },
@@ -32,7 +32,7 @@ export const UserController = {
             let response = await Network.JsonRequest('GET', `/users/${userId}`);
             return response;
         } catch (error) {
-            console.log('TODO: HANDLE ERROR:');
+            console.log('TODO: HANDLE ERROR:loadUser');
             console.error(error);            
         }
     },
@@ -42,7 +42,7 @@ export const UserController = {
             let response = await Network.JsonRequest('GET', `/users/${userId}/memberOf`);
             return response;
         } catch (error) {
-            console.log('TODO: HANDLE ERROR:');
+            console.log('TODO: HANDLE ERROR:loadUserMemberOf');
             console.error(error);            
         }
     }

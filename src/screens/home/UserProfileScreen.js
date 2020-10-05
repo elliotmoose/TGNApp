@@ -6,17 +6,26 @@ import { PostController } from '../../api/PostController';
 import PostBody from '../../components/home/PostBody';
 import { UserController } from '../../api/UserController';
 import ImageLoader from '../../api/ImageLoader';
+import Images from '../../helpers/Images';
 
 class UserProfileScreen extends Component {
     state = {
         posts: [],
-        user: {}
+        user: {},
+        noAccess: false
     }
 
     async loadPostsByUser() {
         let userId = this.props.route.params.userId;
-        let posts = await PostController.LoadUserPosts(userId) || [];
-        this.setState({posts});
+        let res = await PostController.LoadUserPosts(userId);
+
+        if(res.error && res.error.code == 'ERROR_NOT_AUTHORISED') {
+            this.setState({noAccess: true});
+        }
+        else {
+            let posts = res;            
+            this.setState({posts, noAccess: false});
+        }
     }
     
     async loadUser() {
@@ -46,7 +55,7 @@ class UserProfileScreen extends Component {
         let followerCount = user.followerCount || 0;
         let followingCount = user.followingCount || 0;
         
-        return <View style={{width: '100%', padding: 16, backgroundColor: 'white', marginBottom: 20}}>
+        return <View style={{width: '100%', padding: 16, backgroundColor: 'white', shadowOpacity: 0.2, shadowColor: 'black', shadowOffset: {width: 0, height: 0},  zIndex: 1}}>
             <View style={{height: 55, flexDirection: 'row'}}>
                 <Image style={{backgroundColor: Colors.darkGray, borderRadius: 300, height: '100%', aspectRatio: 1}} source={{uri: profilePicture}}/>
                 <View style={{flex: 1, justifyContent: 'space-between', marginLeft: 12, marginVertical: 2}}>
@@ -64,35 +73,44 @@ class UserProfileScreen extends Component {
         </View>
     }
 
-    render() {        
+    renderPosts() {
         let posts = this.state.posts;
-        let userDetailsItem = this.state.user;
-        let data = [userDetailsItem, ...posts];
-
-        return <View style={{ width: '100%', flex: 1 }}>
+        return (
             <FlatList
-                data={data}
+                data={posts}
                 renderItem={({ item }) => {
-                    if (item == userDetailsItem) {
-                        return this.renderUserDetails(item); 
-                    }
-                    else {
-                        return <View style={{ padding: 16, backgroundColor: 'white', marginBottom: 20 }}>
-                            <PostBody
-                                post={item}
-                                style={{ width: '100%' }}
-                            />
-                        </View>
-                    }
+                    return <View style={{ padding: 16, backgroundColor: 'white', marginVertical: 10 }}>
+                        <PostBody
+                            post={item}
+                            style={{ width: '100%' }}
+                        />
+                    </View>
                 }}
-            keyExtractor={(item, index) => `${item && item._id}`}
-            style={{ backgroundColor: Colors.bgGray }}
+                contentContainerStyle={{ paddingTop: 10 }}
+                keyExtractor={(item, index) => `${item && item._id}`}
+                style={{ backgroundColor: Colors.bgGray }}
             // onRefresh={this.refresh.bind(this)}
             // refreshing={this.state.isRefreshing}
             // onEndReached={this.loadMore.bind(this)}
             // onEndReachedThreshold={2}
             // ListFooterComponent={this.renderLoadingFooter.bind(this)}
-        />
+            />
+        )
+    }
+    renderPrivate() {
+        return (<View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+            <Image style={{height: '20%', aspectRatio: 1, margin: 16}} resizeMode='contain' source={Images.lock}/>
+            <Text style={{fontWeight: '700', fontSize: 25}}>This account is private</Text>
+            <Text style={{fontWeight: '500', color: Colors.fontGray, textAlign: 'center'}}>Follow this account to see{'\n'}their posts</Text>
+        </View>)
+    }
+
+    render() {        
+        let user = this.state.user || {};
+
+        return <View style={{ width: '100%', flex: 1 }}>
+            {this.renderUserDetails(user)}            
+            {this.state.noAccess ? this.renderPrivate() : this.renderPosts()}
     </View>
     }
 }
