@@ -4,6 +4,7 @@ import { SafeAreaView } from 'react-navigation';
 import { connect } from 'react-redux';
 import { UserController } from '../../api/UserController';
 import Colors from '../../constants/Colors';
+import { Screen, Sizing } from '../../constants/Sizing';
 import Images from '../../helpers/Images';
 
 class Login extends Component {
@@ -38,23 +39,25 @@ class Login extends Component {
 
     render() {
         return (
-            <SafeAreaView style={{backgroundColor: Colors.offWhite, flex: 1}}>
-                <TouchableWithoutFeedback style={{flex: 1}} onPress={()=>Keyboard.dismiss()}>
-                    <View style={{flex: 1}}>
-                        {/* <Image source={Images.logo} style={{left: 5, top: 5, height: '130%', width: '130%', position: 'absolute'}} resizeMode='contain'/>                     */}
-                        <View style={{height: 160, width: 110, alignSelf: 'center', marginBottom: 20, marginTop: 50}}>
-                            <Image source={Images.logo} style={{height: '100%', width: '100%'}} resizeMode='contain'/>
+            <View style={{flex:1, backgroundColor: Colors.offWhite}}>
+                <Image source={Images.loginBackground} style={{bottom: 0, height: '100%', width: '100%', position: 'absolute'}} resizeMode='cover'/>                    
+                <SafeAreaView style={{flex: 1}}>
+                    <TouchableWithoutFeedback style={{flex: 1}} onPress={()=>Keyboard.dismiss()}>
+                        <View style={{flex: 1}}>
+                            <View style={{height: 160, width: 65, alignSelf: 'center', marginBottom: 20, marginTop: 50}}>
+                                <Image source={Images.cross} style={{height: '100%', width: '100%'}} resizeMode='contain'/>
+                            </View>
+                            <View style={{flex: 1, padding: 25}}>
+                                <TextInput style={styles.usernameTextInput} placeholder='username' value={this.state.username} onChangeText={(text)=>this.setState({username: text})} textContentType='username' autoCapitalize='none' autoFocus={true}/>
+                                <TextInput style={styles.usernameTextInput} placeholder='password' secureTextEntry={true} value={this.state.password} onChangeText={(text)=>this.setState({password: text})} textContentType='password' autoCapitalize='none'/>
+                                <TouchableOpacity style={styles.loginButton} onPress={()=>this.submit()}>
+                                    <Text style={{color: 'white', fontWeight: '600', fontSize: 18, letterSpacing: 3}}>LOGIN</Text>
+                                </TouchableOpacity>
+                            </View>
                         </View>
-                        <View style={{flex: 1, padding: 25}}>
-                            <TextInput style={styles.usernameTextInput} placeholder='username' value={this.state.username} onChangeText={(text)=>this.setState({username: text})} textContentType='username' autoCapitalize='none' autoFocus={true}/>
-                            <TextInput style={styles.usernameTextInput} placeholder='password' secureTextEntry={true} value={this.state.password} onChangeText={(text)=>this.setState({password: text})} textContentType='password' autoCapitalize='none'/>
-                            <TouchableOpacity style={styles.loginButton} onPress={()=>this.submit()}>
-                                <Text style={{color: 'white', fontWeight: '600', fontSize: 18, letterSpacing: 3}}>LOGIN</Text>
-                            </TouchableOpacity>
-                        </View>
-                    </View>
-                </TouchableWithoutFeedback>
-            </SafeAreaView>
+                    </TouchableWithoutFeedback>
+                </SafeAreaView>
+            </View>
         );
     }
 }

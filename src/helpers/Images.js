@@ -12,6 +12,7 @@ var Images = {
     chevron: require('../../assets/images/chevron.png'),
     lock: require('../../assets/images/lock.png'),
     logo: require('../../assets/images/logo.png'),
+    loginBackground: require('../../assets/images/loginBackground.png'),
     cross: require('../../assets/images/cross.png'),
 }
 
