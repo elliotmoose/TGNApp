@@ -23,7 +23,7 @@ class UserProfileScreen extends Component {
             this.setState({noAccess: true});
         }
         else {
-            let posts = res;            
+            let posts = res || [];            
             this.setState({posts, noAccess: false});
         }
     }
@@ -74,7 +74,7 @@ class UserProfileScreen extends Component {
     }
 
     renderPosts() {
-        let posts = this.state.posts;
+        let posts = this.state.posts || [];
         return (
             <FlatList
                 data={posts}

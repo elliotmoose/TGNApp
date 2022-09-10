@@ -18,7 +18,6 @@ class Feed extends Component {
     }
 
     async componentDidMount() {        
-        await UserController.login('lywjoel', '12345');
         await this.loadFeed()
     }
 

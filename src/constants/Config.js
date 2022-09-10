@@ -5,7 +5,7 @@ let isIos = Platform.OS == 'ios' ;
 export const [PRODUCTION, DEV, CLEANBUILD,] = ['PRODUCTION', 'DEV', 'CLEANBUILD']
 
 export default {
-    local: true,
+    local: false,
     isIos : isIos,
     debugMode: DEV,
     domain: ''

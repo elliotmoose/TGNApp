@@ -77,8 +77,9 @@ export const PostController = {
         try {
             assertRequiredParams({userId});
             let response = await Network.JsonRequest('GET',`/users/${userId}/posts?limit=${FEED_POST_PAGE_SIZE}`);
-            store.dispatch(UpdatePostCache(response));
-            return response;
+            let responseArray = Array.isArray(response) ? response : [];
+            store.dispatch(UpdatePostCache(responseArray));
+            return responseArray;
         } catch (error) {
             return {error};
 
